@@ -20,7 +20,7 @@ public class Ws_scrapper {
 		
 		//getAlbums("e2ffceb5-a6b5-11e0-b446-00251188dd67");
 		
-		getTracks("0abface0-edd2-7c32-2380-5db7d8dad665");
+		//getTracks("0abface0-edd2-7c32-2380-5db7d8dad665");
 		
 		System.out.println("END");
 		
