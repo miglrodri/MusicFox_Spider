@@ -14,6 +14,57 @@ public class Ws_scrapper {
 	
 	public static String api_key = "57716264bdd91bd35edc83d13f16f30c";
 
+	private String[] blues = {
+			"e21ee849-a6b5-11e0-b446-00251188dd67",
+			"e21ed16d-a6b5-11e0-b446-00251188dd67",
+			"e21ed088-a6b5-11e0-b446-00251188dd67",
+			"62766328-e08c-3180-fb0f-cb340d6b1e2d",
+			"1b9b65bb-c8d3-effb-853a-47be252c43b4",
+			"e576c7d8-a6b5-11e0-b446-00251188dd67",
+			"d3f3164e-6e3d-e932-640e-95ea77d945ae",
+			"e69bf71b-a6b5-11e0-b446-00251188dd67",
+			"e59c4d0d-a6b5-11e0-b446-00251188dd67",
+			"91b309ca-fbe3-344d-5eae-502f85b58864"
+			};
+	
+	private String[] country = {
+			"e45ba6f6-a6b5-11e0-b446-00251188dd67",
+			"ea73553f-a6b5-11e0-b446-00251188dd67",
+			"ef82ddea-a6b5-11e0-b446-00251188dd67",
+			"83e62474-a62d-2b55-abe3-25f9ef802b00",
+			"ee1a5c3d-a6b5-11e0-b446-00251188dd67",
+			"e45ba6f6-a6b5-11e0-b446-00251188dd67",
+			"ea73553f-a6b5-11e0-b446-00251188dd67",
+			"84cd6ddc-c91c-7451-7df0-944d838350a8",
+			"e5bf687e-a6b5-11e0-b446-00251188dd67",
+			"931539bf-8e62-c642-a116-9ee3e0758e43"
+			};
+	
+	private String[] vocal = {};
+	
+	private String[] electronic = {};
+	
+	private String[] jazz = {
+			"e4be067b-a6b5-11e0-b446-00251188dd67",
+			"9af98ec2-7774-7aa8-f7ce-11015444374c",
+			"e6e62cda-a6b5-11e0-b446-00251188dd67",
+			"6b9bfdad-8f75-8763-59c4-98fc6122efa5",
+			"e6066461-0f1d-8412-9a50-bf7d5053aa75",
+			"e24d0ca3-a6b5-11e0-b446-00251188dd67",
+			"920f7c93-b58c-3b1c-c6a9-9782ebf9514d",
+			"e6950a2d-a6b5-11e0-b446-00251188dd67",
+			"e2e72e81-a6b5-11e0-b446-00251188dd67",
+			"40ff1c67-59ca-05d2-47f3-6b134e5012fa"
+			};
+	
+	private String[] pop_rock = {};
+	
+	private String[] r_and_b = {};
+	
+	private String[] rap = {};
+	
+	private String[] reggae = {};
+	
 	public static void main(String[] args) throws Exception {
 		
 		//getArtists("e2ffceb5-a6b5-11e0-b446-00251188dd67", 0);
