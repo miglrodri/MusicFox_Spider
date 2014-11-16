@@ -27,15 +27,12 @@ public class Ws_scrapper {
 		
 		getArtists.start();
 		
-
-		System.out.println("END");
-
 	} 
 }
 
 class get extends Thread{
 	
-	public static String api_key = "57716264bdd91bd35edc83d13f16f30c";
+	private String api_key = "57716264bdd91bd35edc83d13f16f30c";
 	
 	private String[] blues = { "e21ee849-a6b5-11e0-b446-00251188dd67",
 			"e21ed16d-a6b5-11e0-b446-00251188dd67",
@@ -105,30 +102,90 @@ class get extends Thread{
 			"a2814de7-1a09-b9dd-4bba-576950680b2b",
 			"e2bc7654-cb40-b47c-6e2c-4615188a9c6b" };
 
-	private String[] pop_rock = {};
+	private String[] pop_rock = {
+			"e2ffceb5-a6b5-11e0-b446-00251188dd67",
+			"e5cae432-a6b5-11e0-b446-00251188dd67",
+			"789aaf1e-d05e-2e77-7148-2cad9b96d558",
+			"acfc1a73-fd8b-4a3f-dc48-c56c3e57fc4e",
+			"e22e4bfb-a6b5-11e0-b446-00251188dd67",
+			"e7a06e67-a6b5-11e0-b446-00251188dd67",
+			"169f779e-e7fe-9006-2426-13b7dbcdda6c",
+			"87696308-1518-38ca-29e1-bab8caf120ba",
+			"0bd17ae1-cb85-2d3f-28d2-35182f9a0f25",
+			"333caa00-4211-ce3d-e60c-d07dd0d954c8"
+			};
 
-	private String[] r_and_b = {};
+	private String[] r_and_b = {"b59a61ed-5be7-5694-bbc4-160523e4abe8",
+			"6cb4bc22-71a6-9f57-193a-e88aae92b975",
+			"dc78ddd1-f2f4-1b29-f7db-7627018688e7",
+			"eb63fd6f-a6b5-11e0-b446-00251188dd67",
+			"f50e6ec0-b477-5521-82ce-a35527d50244",
+			"e6b1441e-a6b5-11e0-b446-00251188dd67",
+			"62e4e2d5-b34e-4712-01f0-ec879c6251ab",
+			"e2ffcd91-a6b5-11e0-b446-00251188dd67",
+			"815bed6b-d7bb-eccc-f8fe-aaae44086f43",
+			"e211bf6b-a6b5-11e0-b446-00251188dd67"
+			};
 
-	private String[] rap = {};
+	private String[] rap = {
+			"65951b5d-f6f6-898a-0e85-9f2dc8f7e888",
+			"3d8ace70-6493-f175-b6a8-1a2a4fc1a37b",
+			"4fedd4c4-fbf2-16f1-dd3d-2cf446d0e986",
+			"d64a0494-3777-4e5f-f3d2-d5310e30a88c",
+			"e4484087-a6b5-11e0-b446-00251188dd67",
+			"e310a0db-a6b5-11e0-b446-00251188dd67",
+			"3dbbeb4c-0d81-39d2-84d6-cecc21c5cedd",
+			"82cea060-ac73-45d8-75a4-9a037a16baac",
+			"c42e44a0-b945-1e4f-2e71-09cfb932e1e5",
+			"e6b149bb-a6b5-11e0-b446-00251188dd67"
+			};
 
-	private String[] reggae = {};
+	private String[] reggae = {
+			"e2059f5a-a6b5-11e0-b446-00251188dd67",
+			"236c28d0-0b32-cb78-e995-6a467ff4c8ec",
+			"e2150a9b-a6b5-11e0-b446-00251188dd67",
+			"e5bf3ed5-a6b5-11e0-b446-00251188dd67",
+			"22291377-193a-aab8-ad55-6611e3994774",
+			"6b2cdc25-6b22-06ca-d7bf-03eb40156026",
+			"e5d199c1-a6b5-11e0-b446-00251188dd67",
+			"e5383fdd-a6b5-11e0-b446-00251188dd67",
+			"ef0f4e6a-a6b5-11e0-b446-00251188dd67",
+			"63fff093-cad6-847f-f054-3e08d9fc5190"
+			};
 
-	public Map<String, String> map = new HashMap<String, String>();
+	private Map<String, String> map = new HashMap<String, String>();
 	
 	@Override
 	public void run(){
 		try {
 			for (int i = 0; i < jazz.length; i++) {
+				System.out.println("Jazz Artists");
 				getArtists(jazz[i], 0);
+				System.out.println("Blues Artists");
 				getArtists(blues[i], 0);
+				System.out.println("Country Artists");
 				getArtists(country[i], 0);
+				System.out.println("Vocal Artists");
 				getArtists(vocal[i], 0);
+				System.out.println("Electronic Artists");
 				getArtists(electronic[i], 0);
+				System.out.println("International Artists");
 				getArtists(international[i], 0);
+				System.out.println("Pop/Rock Artists");
+				getArtists(pop_rock[i], 0);
+				System.out.println("R&B Artists");
+				getArtists(r_and_b[i], 0);
+				System.out.println("Rap Artists");
+				getArtists(rap[i], 0);
+				System.out.println("Reggae Artists");
+				getArtists(reggae[i], 0);
 				sleep(500);
 			}
-			JSONObject jsonObject = new JSONObject(map);
-			FileWriter file = new FileWriter("file1.txt");
+			
+			System.out.println("END SCRAPPING: got "+map.size()+" entries");
+			
+			JSONObject jsonObject = new JSONObject(getMap());
+			FileWriter file = new FileWriter("file2.txt");
 			
 			file.write(jsonObject.toString());
 			System.out.println("Successfully Copied JSON Object to File...");
@@ -142,6 +199,14 @@ class get extends Thread{
 		} 		
 	}
 	
+	public Map<String, String> getMap() {
+		return map;
+	}
+
+	public void setMap(Map<String, String> map) {
+		this.map = map;
+	}
+
 	/**
 	 * Get a list of Tracks from an Album
 	 * 
@@ -286,7 +351,7 @@ class get extends Thread{
 	 */
 	public void getArtists(String artist_id, int depth) {
 
-		if (depth > 2) {
+		if (depth > 1) {
 			return;
 		}
 
@@ -335,10 +400,10 @@ class get extends Thread{
 					String temp_artist_id = (String) arr.getJSONObject(i).get("id");
 					System.out.println(artist_id + ">id>" + temp_artist_id);
 					
-					if (!map.containsKey(temp_artist_id))
-						map.put(temp_artist_id, temp_artist_name);
+					if (!getMap().containsKey(temp_artist_id))
+						getMap().put(temp_artist_id, temp_artist_name);
 					sleep(500);
-					getArtists(temp_artist_id, depth + 1);
+					//getArtists(temp_artist_id, depth + 1);
 				}
 			}
 
