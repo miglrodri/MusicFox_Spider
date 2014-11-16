@@ -1,6 +1,7 @@
 package ws_scrapper;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,7 +10,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.json.*;
@@ -31,6 +36,10 @@ public class Ws_scrapper {
 	} 
 }
 
+/**
+ * Class for scrapping
+ * 
+ */
 class get extends Thread{
 	
 	private String api_key = "57716264bdd91bd35edc83d13f16f30c";
@@ -163,10 +172,16 @@ class get extends Thread{
 	private Map<String, Map> albumMap = new HashMap<String, Map>();
 	private Map<String, Map> trackMap = new HashMap<String, Map>();
 	
+	/**
+	 * Thread start point
+	 * 
+	 * @return 
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void run(){
 		try {
-			System.out.println("SCRAPPING ARTISTS");
+			/*System.out.println("SCRAPPING ARTISTS");
 			
 			for (int i = 0; i < jazz.length; i++) {		
 				getArtists(jazz[i], 0);
@@ -191,9 +206,31 @@ class get extends Thread{
 				sleep(500);
 			}
 			
-			System.out.println("END SCRAPPING: got "+albumMap.size()+" entries");
+			System.out.println("END SCRAPPING: got "+albumMap.size()+" entries");*/
 			
-			JSONObject jsonArtists = new JSONObject(artistMap);
+			FileReader fr = new FileReader("fileAlbums.json");
+			BufferedReader br = new BufferedReader(fr);
+	        StringBuilder bu = new StringBuilder();
+			for (String line = null; (line = br.readLine()) != null;) {
+	            bu.append(line).append("\n");
+	        } 
+			
+			JSONObject jsonAlbums = new JSONObject(bu.toString());
+	
+			if(jsonAlbums != JSONObject.NULL) {
+	            albumMap = (Map<String, Map>) toMap(jsonAlbums);
+	        }
+			
+			for (String key : albumMap.keySet()) {
+				Collection map = albumMap.get(key).keySet();
+				for(Object values : map){
+					Map temp = getTracks((String) values);
+					albumMap.put(key, temp);
+					sleep(500);
+				}
+			}
+			
+			/*JSONObject jsonArtists = new JSONObject(artistMap);
 			JSONObject jsonAlbums = new JSONObject(albumMap);
 			FileWriter fileArtists = new FileWriter("fileArtists.json");
 			FileWriter fileAlbums = new FileWriter("fileAlbums.json");
@@ -201,13 +238,10 @@ class get extends Thread{
 			fileArtists.write(jsonArtists.toString());
 			fileAlbums.write(jsonAlbums.toString());
 			
-			System.out.println("Successfully Copied JSON Object to File...");
-			System.out.println("\nJSON Object: " + jsonArtists);
-			System.out.println("Successfully Copied JSON Object to File...");
-			System.out.println("\nJSON Object: " + jsonAlbums);
+			
 			
 			fileArtists.close();
-			fileAlbums.close();
+			fileAlbums.close();*/
 			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -216,33 +250,81 @@ class get extends Thread{
 		} 		
 	}
 	
+	/**
+	 * Builds a Map from a JSONObject
+	 * 
+	 * @param object
+	 * @return Map<String, ?>
+	 * @throws JSONException 
+	 */
+	public Map<String, ?> toMap(JSONObject object) throws JSONException {
 
+		Map<String, Object> map = new HashMap<String, Object>();
+		@SuppressWarnings("unchecked")
+		Iterator<String> keysItr = object.keys();
+
+		while (keysItr.hasNext()) {
+			String key = keysItr.next();
+			Object value = object.get(key);
+			if (value instanceof JSONArray) {
+				value = toList((JSONArray) value);
+			} else if (value instanceof JSONObject) {
+				value = toMap((JSONObject) value);
+			}
+			map.put(key, value);
+		}
+		return map;
+	}
+	
+	/**
+	 * Get a list from a JSONArray
+	 * 
+	 * @param array
+	 * @return List<?>
+	 * @throws JSONException 
+	 */
+	public List<?> toList(JSONArray array) throws JSONException {
+		List<Object> list = new ArrayList<Object>();
+		for (int i = 0; i < array.length(); i++) {
+			Object value = array.get(i);
+			if (value instanceof JSONArray) {
+				value = toList((JSONArray) value);
+			}
+
+			else if (value instanceof JSONObject) {
+				value = toMap((JSONObject) value);
+			}
+			list.add(value);
+		}
+		return list;
+	}
 
 	/**
 	 * Get a list of Tracks from an Album
 	 * 
 	 * @param album_id
+	 * @return 
+	 * @throws InterruptedException 
 	 */
-	private void getTracks(String album_id) {
+	private Map getTracks(String album_id) throws InterruptedException {
 
+		Map<String, String> temp = new HashMap<String, String>();
+		
 		try {
 			String url = "http://api.musicgraph.com/api/v2/album/";
 			url += album_id;
 			url += "/tracks?api_key=" + api_key + "&limit=10";
-
+			
 			URL obj_url = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj_url
 					.openConnection();
 
-			// optional default is GET
 			con.setRequestMethod("GET");
 
-			// add request header
 			con.setRequestProperty("User-Agent", "Mozilla/5.0");
 
 			int responseCode = con.getResponseCode();
-			// System.out.println("\nSending 'GET' request to URL : " + url);
-			// System.out.println("Response Code : " + responseCode);
+
 			if (responseCode != 200)
 				throw new Exception("Error "+responseCode);
 
@@ -256,8 +338,6 @@ class get extends Thread{
 			}
 			in.close();
 
-			// print result
-			// System.out.println(response.toString());
 
 			JSONObject obj = new JSONObject(response.toString());
 			String message = obj.getJSONObject("status").getString("message");
@@ -265,25 +345,26 @@ class get extends Thread{
 			if (message.equals("Success")) {
 				JSONArray arr = obj.getJSONArray("data");
 				for (int i = 0; i < arr.length(); i++) {
-					System.out.println(album_id + ">name>"+ arr.getJSONObject(i).get("title"));
+					String temp_title = (String) arr.getJSONObject(i).get("title");
+					System.out.println(album_id + ">name>"+ temp_title);
 					String temp_track_id = (String) arr.getJSONObject(i).get("id");
 					System.out.println(album_id + ">id>" + temp_track_id);
+					temp.put(temp_track_id, temp_title);
 				}
 			}
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
 			System.out.println("getAlbums < DUDE ERROR!"+e.getMessage());
+			sleep(500);
 		}
 
+		return temp;
 	}
 
 	/**
