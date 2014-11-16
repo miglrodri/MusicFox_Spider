@@ -217,7 +217,8 @@ class Scraper extends Thread{
 			System.out.println("SCRAPPING TRACKS");
 			
 			StringBuilder bu = new StringBuilder();
-			for (String line = null; (line = new BufferedReader(new FileReader("fileAlbums.json")).readLine()) != null;) {
+			FileReader fileReader = new FileReader("fileAlbums.json");
+			for (String line = null; (line = new BufferedReader(fileReader).readLine()) != null;) {
 	            bu.append(line).append("\n");
 	        } 
 			
