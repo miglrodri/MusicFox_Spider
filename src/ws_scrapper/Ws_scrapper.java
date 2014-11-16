@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -34,7 +35,8 @@ class get extends Thread{
 	
 	private String api_key = "57716264bdd91bd35edc83d13f16f30c";
 	
-	private String[] blues = { "e21ee849-a6b5-11e0-b446-00251188dd67",
+	private String[] blues = { 
+			"e21ee849-a6b5-11e0-b446-00251188dd67",
 			"e21ed16d-a6b5-11e0-b446-00251188dd67",
 			"e21ed088-a6b5-11e0-b446-00251188dd67",
 			"62766328-e08c-3180-fb0f-cb340d6b1e2d",
@@ -45,7 +47,8 @@ class get extends Thread{
 			"e59c4d0d-a6b5-11e0-b446-00251188dd67",
 			"91b309ca-fbe3-344d-5eae-502f85b58864" };
 
-	private String[] country = { "e45ba6f6-a6b5-11e0-b446-00251188dd67",
+	private String[] country = { 
+			"e45ba6f6-a6b5-11e0-b446-00251188dd67",
 			"ea73553f-a6b5-11e0-b446-00251188dd67",
 			"ef82ddea-a6b5-11e0-b446-00251188dd67",
 			"83e62474-a62d-2b55-abe3-25f9ef802b00",
@@ -56,7 +59,8 @@ class get extends Thread{
 			"e5bf687e-a6b5-11e0-b446-00251188dd67",
 			"931539bf-8e62-c642-a116-9ee3e0758e43" };
 
-	private String[] vocal = { "e2ddeac8-a6b5-11e0-b446-00251188dd67",
+	private String[] vocal = { 
+			"e2ddeac8-a6b5-11e0-b446-00251188dd67",
 			"e2ddea5d-a6b5-11e0-b446-00251188dd67",
 			"e3a5e921-a6b5-11e0-b446-00251188dd67",
 			"e6cb0fd2-a6b5-11e0-b446-00251188dd67",
@@ -79,7 +83,8 @@ class get extends Thread{
 			"825aed91-519b-f6e8-4113-821c9a5823f2",
 			"5a963b4a-66e4-763e-d88c-a4e972813099" };
 
-	private String[] jazz = { "e4be067b-a6b5-11e0-b446-00251188dd67",
+	private String[] jazz = { 
+			"e4be067b-a6b5-11e0-b446-00251188dd67",
 			"9af98ec2-7774-7aa8-f7ce-11015444374c",
 			"e6e62cda-a6b5-11e0-b446-00251188dd67",
 			"6b9bfdad-8f75-8763-59c4-98fc6122efa5",
@@ -115,7 +120,8 @@ class get extends Thread{
 			"333caa00-4211-ce3d-e60c-d07dd0d954c8"
 			};
 
-	private String[] r_and_b = {"b59a61ed-5be7-5694-bbc4-160523e4abe8",
+	private String[] r_and_b = {
+			"b59a61ed-5be7-5694-bbc4-160523e4abe8",
 			"6cb4bc22-71a6-9f57-193a-e88aae92b975",
 			"dc78ddd1-f2f4-1b29-f7db-7627018688e7",
 			"eb63fd6f-a6b5-11e0-b446-00251188dd67",
@@ -153,59 +159,64 @@ class get extends Thread{
 			"63fff093-cad6-847f-f054-3e08d9fc5190"
 			};
 
-	private Map<String, String> map = new HashMap<String, String>();
+	private Map<String, String> artistMap = new HashMap<String, String>();
+	private Map<String, Map> albumMap = new HashMap<String, Map>();
+	private Map<String, Map> trackMap = new HashMap<String, Map>();
 	
 	@Override
 	public void run(){
 		try {
-			for (int i = 0; i < jazz.length; i++) {
-				System.out.println("Jazz Artists");
+			System.out.println("SCRAPPING ARTISTS");
+			
+			for (int i = 0; i < jazz.length; i++) {		
 				getArtists(jazz[i], 0);
-				System.out.println("Blues Artists");
 				getArtists(blues[i], 0);
-				System.out.println("Country Artists");
 				getArtists(country[i], 0);
-				System.out.println("Vocal Artists");
 				getArtists(vocal[i], 0);
-				System.out.println("Electronic Artists");
 				getArtists(electronic[i], 0);
-				System.out.println("International Artists");
 				getArtists(international[i], 0);
-				System.out.println("Pop/Rock Artists");
 				getArtists(pop_rock[i], 0);
-				System.out.println("R&B Artists");
 				getArtists(r_and_b[i], 0);
-				System.out.println("Rap Artists");
 				getArtists(rap[i], 0);
-				System.out.println("Reggae Artists");
 				getArtists(reggae[i], 0);
 				sleep(500);
 			}
 			
-			System.out.println("END SCRAPPING: got "+map.size()+" entries");
+			System.out.println("END SCRAPPING: got "+artistMap.size()+" entries");
+			System.out.println("SCRAPPING ALBUMS");
 			
-			JSONObject jsonObject = new JSONObject(getMap());
-			FileWriter file = new FileWriter("file2.txt");
+			for (String key : artistMap.keySet()) {
+				Map temp = getAlbums(key);
+				albumMap.put(key, temp);
+				sleep(500);
+			}
 			
-			file.write(jsonObject.toString());
+			System.out.println("END SCRAPPING: got "+albumMap.size()+" entries");
+			
+			JSONObject jsonArtists = new JSONObject(artistMap);
+			JSONObject jsonAlbums = new JSONObject(albumMap);
+			FileWriter fileArtists = new FileWriter("fileArtists.json");
+			FileWriter fileAlbums = new FileWriter("fileAlbums.json");
+	
+			fileArtists.write(jsonArtists.toString());
+			fileAlbums.write(jsonAlbums.toString());
+			
 			System.out.println("Successfully Copied JSON Object to File...");
-			System.out.println("\nJSON Object: " + jsonObject);
+			System.out.println("\nJSON Object: " + jsonArtists);
+			System.out.println("Successfully Copied JSON Object to File...");
+			System.out.println("\nJSON Object: " + jsonAlbums);
+			
+			fileArtists.close();
+			fileAlbums.close();
 			
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 		
 	}
 	
-	public Map<String, String> getMap() {
-		return map;
-	}
 
-	public void setMap(Map<String, String> map) {
-		this.map = map;
-	}
 
 	/**
 	 * Get a list of Tracks from an Album
@@ -270,8 +281,7 @@ class get extends Thread{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			//System.out.println("getAlbums < DUDE ERROR!");
-			e.printStackTrace();
+			System.out.println("getAlbums < DUDE ERROR!"+e.getMessage());
 		}
 
 	}
@@ -280,9 +290,12 @@ class get extends Thread{
 	 * Get a list of Albums for a given artist
 	 * 
 	 * @param artist_id
+	 * @throws InterruptedException 
 	 */
-	private void getAlbums(String artist_id) {
+	private Map getAlbums(String artist_id) throws InterruptedException {
 
+		Map<String, String> temp = new HashMap<String, String>();
+		
 		try {
 			String url = "http://api.musicgraph.com/api/v2/artist/";
 			url += artist_id;
@@ -292,15 +305,12 @@ class get extends Thread{
 			HttpURLConnection con = (HttpURLConnection) obj_url
 					.openConnection();
 
-			// optional default is GET
 			con.setRequestMethod("GET");
 
-			// add request header
 			con.setRequestProperty("User-Agent", "Mozilla/5.0");
 
 			int responseCode = con.getResponseCode();
-			// System.out.println("\nSending 'GET' request to URL : " + url);
-			// System.out.println("Response Code : " + responseCode);
+			
 			if (responseCode != 200)
 				throw new Exception("Error "+responseCode);
 
@@ -314,33 +324,32 @@ class get extends Thread{
 			}
 			in.close();
 
-			// print result
-			// System.out.println(response.toString());
-
 			JSONObject obj = new JSONObject(response.toString());
 			String message = obj.getJSONObject("status").getString("message");
 
 			if (message.equals("Success")) {
 				JSONArray arr = obj.getJSONArray("data");
 				for (int i = 0; i < arr.length(); i++) {
-					System.out.println(artist_id + ">name>"+ arr.getJSONObject(i).get("title"));
+					String temp_title = (String) arr.getJSONObject(i).get("title");
+					System.out.println(artist_id + ">name>"+ temp_title);
 					String temp_album_id = (String) arr.getJSONObject(i).get("id");
 					System.out.println(artist_id + ">id>" + temp_album_id);
+					temp.put(temp_album_id, temp_title);
 				}
 			}
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			System.out.println("getAlbums < DUDE ERROR!");
+			System.out.println("getAlbums < DUDE ERROR!"+e.getMessage());
+			sleep(500);
 		}
+		
+		return temp;
 	}		
 	
 	/**
@@ -364,15 +373,12 @@ class get extends Thread{
 			HttpURLConnection con = (HttpURLConnection) obj_url
 					.openConnection();
 
-			// optional default is GET
 			con.setRequestMethod("GET");
 
-			// add request header
 			con.setRequestProperty("User-Agent", "Mozilla/5.0");
 
 			int responseCode = con.getResponseCode();
-			// System.out.println("\nSending 'GET' request to URL : " + url);
-			// System.out.println("Response Code : " + responseCode);
+		
 			if (responseCode != 200)
 				throw new Exception("Error "+responseCode);
 
@@ -386,9 +392,6 @@ class get extends Thread{
 			}
 			in.close();
 
-			// print result
-			// System.out.println(response.toString());
-
 			JSONObject obj = new JSONObject(response.toString());
 			String message = obj.getJSONObject("status").getString("message");
 
@@ -400,21 +403,18 @@ class get extends Thread{
 					String temp_artist_id = (String) arr.getJSONObject(i).get("id");
 					System.out.println(artist_id + ">id>" + temp_artist_id);
 					
-					if (!getMap().containsKey(temp_artist_id))
-						getMap().put(temp_artist_id, temp_artist_name);
+					if (!artistMap.containsKey(temp_artist_id))
+						artistMap.put(temp_artist_id, temp_artist_name);
 					sleep(500);
 					//getArtists(temp_artist_id, depth + 1);
 				}
 			}
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
 			System.out.println("getArtists < DUDE ERROR!"+e.getMessage());
