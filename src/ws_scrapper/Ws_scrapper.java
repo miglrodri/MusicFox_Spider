@@ -1,18 +1,24 @@
 package ws_scrapper;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-import org.json.*;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Ws_scrapper {
 
@@ -24,18 +30,20 @@ public class Ws_scrapper {
 
 		// getTracks("0abface0-edd2-7c32-2380-5db7d8dad665");
 
-		get getArtists = new get();
-		
-		getArtists.start();
+		new Scraper().start();
 		
 	} 
 }
 
-class get extends Thread{
+/**
+ * Class for scraping
+ * 
+ */
+class Scraper extends Thread{
 	
 	private String api_key = "57716264bdd91bd35edc83d13f16f30c";
 	
-	private String[] blues = { 
+	String[] blues = { 
 			"e21ee849-a6b5-11e0-b446-00251188dd67",
 			"e21ed16d-a6b5-11e0-b446-00251188dd67",
 			"e21ed088-a6b5-11e0-b446-00251188dd67",
@@ -45,9 +53,10 @@ class get extends Thread{
 			"d3f3164e-6e3d-e932-640e-95ea77d945ae",
 			"e69bf71b-a6b5-11e0-b446-00251188dd67",
 			"e59c4d0d-a6b5-11e0-b446-00251188dd67",
-			"91b309ca-fbe3-344d-5eae-502f85b58864" };
+			"91b309ca-fbe3-344d-5eae-502f85b58864" 
+			};
 
-	private String[] country = { 
+	String[] country = { 
 			"e45ba6f6-a6b5-11e0-b446-00251188dd67",
 			"ea73553f-a6b5-11e0-b446-00251188dd67",
 			"ef82ddea-a6b5-11e0-b446-00251188dd67",
@@ -57,9 +66,10 @@ class get extends Thread{
 			"ea73553f-a6b5-11e0-b446-00251188dd67",
 			"84cd6ddc-c91c-7451-7df0-944d838350a8",
 			"e5bf687e-a6b5-11e0-b446-00251188dd67",
-			"931539bf-8e62-c642-a116-9ee3e0758e43" };
+			"931539bf-8e62-c642-a116-9ee3e0758e43" 
+			};
 
-	private String[] vocal = { 
+	String[] vocal = { 
 			"e2ddeac8-a6b5-11e0-b446-00251188dd67",
 			"e2ddea5d-a6b5-11e0-b446-00251188dd67",
 			"e3a5e921-a6b5-11e0-b446-00251188dd67",
@@ -69,9 +79,10 @@ class get extends Thread{
 			"4913f54a-dee9-2dc0-9661-3b735e4d2894",
 			"e2f68504-a6b5-11e0-b446-00251188dd67",
 			"e75c61ce-a6b5-11e0-b446-00251188dd67",
-			"b94000bd-2934-dfb0-0cc7-0986a885a572" };
+			"b94000bd-2934-dfb0-0cc7-0986a885a572" 
+			};
 
-	private String[] electronic = {
+	String[] electronic = {
 			"9f78cb80-1b80-ab7f-dd2e-7e8098a6b246",
 			"a4e6f413-4ac9-dac0-c61e-92c7325bc715",
 			"e4dc5181-a6b5-11e0-b446-00251188dd67",
@@ -81,9 +92,10 @@ class get extends Thread{
 			"fffb4e7e-17d8-8bc2-be44-d8516fb31ba0",
 			"ee6a44bc-a6b5-11e0-b446-00251188dd67",
 			"825aed91-519b-f6e8-4113-821c9a5823f2",
-			"5a963b4a-66e4-763e-d88c-a4e972813099" };
+			"5a963b4a-66e4-763e-d88c-a4e972813099" 
+			};
 
-	private String[] jazz = { 
+	String[] jazz = { 
 			"e4be067b-a6b5-11e0-b446-00251188dd67",
 			"9af98ec2-7774-7aa8-f7ce-11015444374c",
 			"e6e62cda-a6b5-11e0-b446-00251188dd67",
@@ -93,9 +105,10 @@ class get extends Thread{
 			"920f7c93-b58c-3b1c-c6a9-9782ebf9514d",
 			"e6950a2d-a6b5-11e0-b446-00251188dd67",
 			"e2e72e81-a6b5-11e0-b446-00251188dd67",
-			"40ff1c67-59ca-05d2-47f3-6b134e5012fa" };
+			"40ff1c67-59ca-05d2-47f3-6b134e5012fa" 
+			};
 
-	private String[] international = {
+	String[] international = {
 			"fb201948-a64a-5ada-22f3-ccf947efaa91",
 			"e39e5de6-d83d-dd7b-d972-4a0ab0361e42",
 			"ee25e0b0-a6b5-11e0-b446-00251188dd67",
@@ -105,9 +118,10 @@ class get extends Thread{
 			"e5a4c8e4-a6b5-11e0-b446-00251188dd67",
 			"edbbb7a9-a6b5-11e0-b446-00251188dd67",
 			"a2814de7-1a09-b9dd-4bba-576950680b2b",
-			"e2bc7654-cb40-b47c-6e2c-4615188a9c6b" };
+			"e2bc7654-cb40-b47c-6e2c-4615188a9c6b" 
+			};
 
-	private String[] pop_rock = {
+	String[] pop_rock = {
 			"e2ffceb5-a6b5-11e0-b446-00251188dd67",
 			"e5cae432-a6b5-11e0-b446-00251188dd67",
 			"789aaf1e-d05e-2e77-7148-2cad9b96d558",
@@ -120,7 +134,7 @@ class get extends Thread{
 			"333caa00-4211-ce3d-e60c-d07dd0d954c8"
 			};
 
-	private String[] r_and_b = {
+	String[] r_and_b = {
 			"b59a61ed-5be7-5694-bbc4-160523e4abe8",
 			"6cb4bc22-71a6-9f57-193a-e88aae92b975",
 			"dc78ddd1-f2f4-1b29-f7db-7627018688e7",
@@ -133,7 +147,7 @@ class get extends Thread{
 			"e211bf6b-a6b5-11e0-b446-00251188dd67"
 			};
 
-	private String[] rap = {
+	String[] rap = {
 			"65951b5d-f6f6-898a-0e85-9f2dc8f7e888",
 			"3d8ace70-6493-f175-b6a8-1a2a4fc1a37b",
 			"4fedd4c4-fbf2-16f1-dd3d-2cf446d0e986",
@@ -146,7 +160,7 @@ class get extends Thread{
 			"e6b149bb-a6b5-11e0-b446-00251188dd67"
 			};
 
-	private String[] reggae = {
+	String[] reggae = {
 			"e2059f5a-a6b5-11e0-b446-00251188dd67",
 			"236c28d0-0b32-cb78-e995-6a467ff4c8ec",
 			"e2150a9b-a6b5-11e0-b446-00251188dd67",
@@ -160,13 +174,21 @@ class get extends Thread{
 			};
 
 	private Map<String, String> artistMap = new HashMap<String, String>();
+	@SuppressWarnings("rawtypes")
 	private Map<String, Map> albumMap = new HashMap<String, Map>();
+	@SuppressWarnings("rawtypes")
 	private Map<String, Map> trackMap = new HashMap<String, Map>();
 	
+	/**
+	 * Thread start point
+	 * 
+	 * @return 
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void run(){
 		try {
-			System.out.println("SCRAPPING ARTISTS");
+			/*System.out.println("SCRAPPING ARTISTS");
 			
 			for (int i = 0; i < jazz.length; i++) {		
 				getArtists(jazz[i], 0);
@@ -191,23 +213,44 @@ class get extends Thread{
 				sleep(500);
 			}
 			
-			System.out.println("END SCRAPPING: got "+albumMap.size()+" entries");
+			System.out.println("END SCRAPPING: got "+albumMap.size()+" entries");*/
+			System.out.println("SCRAPPING TRACKS");
 			
-			JSONObject jsonArtists = new JSONObject(artistMap);
-			JSONObject jsonAlbums = new JSONObject(albumMap);
-			FileWriter fileArtists = new FileWriter("fileArtists.json");
-			FileWriter fileAlbums = new FileWriter("fileAlbums.json");
+			StringBuilder bu = new StringBuilder();
+			for (String line = null; (line = new BufferedReader(new FileReader("fileAlbums.json")).readLine()) != null;) {
+	            bu.append(line).append("\n");
+	        } 
+			
+			JSONObject jsonAlbums = new JSONObject(bu.toString());
 	
+			if(jsonAlbums != JSONObject.NULL) {
+	            albumMap = (Map<String, Map>) toMap(jsonAlbums);
+	        }
+			
+			for (String key : albumMap.keySet()) {
+				Collection map = albumMap.get(key).keySet();
+				for(Object values : map){
+					Map temp = getTracks((String) values);
+					trackMap.put(key, temp);
+					sleep(500);
+				}
+			}
+			
+			System.out.println("END SCRAPPING: got "+trackMap.size()+" entries");
+			
+			/*JSONObject jsonArtists = new JSONObject(artistMap);
+			FileWriter fileArtists = new FileWriter("fileArtists.json");
 			fileArtists.write(jsonArtists.toString());
-			fileAlbums.write(jsonAlbums.toString());
-			
-			System.out.println("Successfully Copied JSON Object to File...");
-			System.out.println("\nJSON Object: " + jsonArtists);
-			System.out.println("Successfully Copied JSON Object to File...");
-			System.out.println("\nJSON Object: " + jsonAlbums);
-			
 			fileArtists.close();
-			fileAlbums.close();
+			JSONObject jsonAlbums = new JSONObject(albumMap);
+			FileWriter fileAlbums = new FileWriter("fileAlbums.json");
+			fileAlbums.write(jsonAlbums.toString());
+			fileAlbums.close();*/
+			
+			JSONObject jsonTracks = new JSONObject(trackMap);
+			FileWriter fileTracks = new FileWriter("fileTracks.json");
+			fileTracks.write(jsonTracks.toString());
+			fileTracks.close();
 			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -216,33 +259,81 @@ class get extends Thread{
 		} 		
 	}
 	
+	/**
+	 * Builds a Map from a JSONObject
+	 * 
+	 * @param object
+	 * @return Map<String, ?>
+	 * @throws JSONException 
+	 */
+	public Map<String, ?> toMap(JSONObject object) throws JSONException {
 
+		Map<String, Object> map = new HashMap<String, Object>();
+		@SuppressWarnings("unchecked")
+		Iterator<String> keysItr = object.keys();
+
+		while (keysItr.hasNext()) {
+			String key = keysItr.next();
+			Object value = object.get(key);
+			if (value instanceof JSONArray) {
+				value = toList((JSONArray) value);
+			} else if (value instanceof JSONObject) {
+				value = toMap((JSONObject) value);
+			}
+			map.put(key, value);
+		}
+		return map;
+	}
+	
+	/**
+	 * Get a list from a JSONArray
+	 * 
+	 * @param array
+	 * @return List<?>
+	 * @throws JSONException 
+	 */
+	public List<?> toList(JSONArray array) throws JSONException {
+		List<Object> list = new ArrayList<Object>();
+		for (int i = 0; i < array.length(); i++) {
+			Object value = array.get(i);
+			if (value instanceof JSONArray) {
+				value = toList((JSONArray) value);
+			}
+
+			else if (value instanceof JSONObject) {
+				value = toMap((JSONObject) value);
+			}
+			list.add(value);
+		}
+		return list;
+	}
 
 	/**
 	 * Get a list of Tracks from an Album
 	 * 
 	 * @param album_id
+	 * @return 
+	 * @throws InterruptedException 
 	 */
-	private void getTracks(String album_id) {
+	private Map<String, String> getTracks(String album_id) throws InterruptedException {
 
+		Map<String, String> temp = new HashMap<String, String>();
+		
 		try {
 			String url = "http://api.musicgraph.com/api/v2/album/";
 			url += album_id;
 			url += "/tracks?api_key=" + api_key + "&limit=10";
-
+			
 			URL obj_url = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj_url
 					.openConnection();
 
-			// optional default is GET
 			con.setRequestMethod("GET");
 
-			// add request header
 			con.setRequestProperty("User-Agent", "Mozilla/5.0");
 
 			int responseCode = con.getResponseCode();
-			// System.out.println("\nSending 'GET' request to URL : " + url);
-			// System.out.println("Response Code : " + responseCode);
+
 			if (responseCode != 200)
 				throw new Exception("Error "+responseCode);
 
@@ -256,8 +347,6 @@ class get extends Thread{
 			}
 			in.close();
 
-			// print result
-			// System.out.println(response.toString());
 
 			JSONObject obj = new JSONObject(response.toString());
 			String message = obj.getJSONObject("status").getString("message");
@@ -265,25 +354,26 @@ class get extends Thread{
 			if (message.equals("Success")) {
 				JSONArray arr = obj.getJSONArray("data");
 				for (int i = 0; i < arr.length(); i++) {
-					System.out.println(album_id + ">name>"+ arr.getJSONObject(i).get("title"));
+					String temp_title = (String) arr.getJSONObject(i).get("title");
+					System.out.println(album_id + ">name>"+ temp_title);
 					String temp_track_id = (String) arr.getJSONObject(i).get("id");
 					System.out.println(album_id + ">id>" + temp_track_id);
+					temp.put(temp_track_id, temp_title);
 				}
 			}
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
 			System.out.println("getAlbums < DUDE ERROR!"+e.getMessage());
+			sleep(500);
 		}
 
+		return temp;
 	}
 
 	/**
@@ -292,7 +382,7 @@ class get extends Thread{
 	 * @param artist_id
 	 * @throws InterruptedException 
 	 */
-	private Map getAlbums(String artist_id) throws InterruptedException {
+	private Map<String, String> getAlbums(String artist_id) throws InterruptedException {
 
 		Map<String, String> temp = new HashMap<String, String>();
 		
