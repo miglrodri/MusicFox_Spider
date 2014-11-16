@@ -248,11 +248,10 @@ class Scraper extends Thread{
 				Collection map = albumMap.get(key).keySet();
 				for(Object values : map){
 					Map temp = getTracks((String) values);
-					trackMap.put(key, temp);
+					trackMap.put((String) values, temp);
 					System.out.println(i++ + " of " + size);
 					sleep(500);
 				}
-				
 			}
 			
 			System.out.println("END SCRAPPING: got "+trackMap.size()+" entries");
