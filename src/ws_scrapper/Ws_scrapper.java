@@ -1,7 +1,6 @@
 package ws_scrapper;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -41,7 +40,7 @@ public class Ws_scrapper {
  */
 class Scraper extends Thread{
 	
-	private String api_key = "57716264bdd91bd35edc83d13f16f30c";
+	private String api_key = "1048b6a5acdb76adc78d351f04b96242";//"57716264bdd91bd35edc83d13f16f30c";
 	
 	String[] blues = { 
 			"e21ee849-a6b5-11e0-b446-00251188dd67",
@@ -184,11 +183,11 @@ class Scraper extends Thread{
 	 * 
 	 * @return 
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes", "resource" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void run(){
 		try {
-			/*System.out.println("SCRAPPING ARTISTS");
+			System.out.println("SCRAPPING ARTISTS");
 			
 			for (int i = 0; i < jazz.length; i++) {		
 				getArtists(jazz[i], 0);
@@ -201,7 +200,6 @@ class Scraper extends Thread{
 				getArtists(r_and_b[i], 0);
 				getArtists(rap[i], 0);
 				getArtists(reggae[i], 0);
-				sleep(500);
 			}
 			
 			System.out.println("END SCRAPPING: got "+artistMap.size()+" entries");
@@ -216,7 +214,6 @@ class Scraper extends Thread{
 			for (String key : artistMap.keySet()) {
 				Map temp = getAlbums(key);
 				albumMap.put(key, temp);
-				sleep(500);
 			}
 			
 			System.out.println("END SCRAPPING: got "+albumMap.size()+" entries");
@@ -226,31 +223,13 @@ class Scraper extends Thread{
 			fileAlbums.write(jsonAlbums.toString());
 			fileAlbums.close();
 			
-			*/
+			
 			System.out.println("SCRAPPING TRACKS");
 			
-			StringBuilder bu = new StringBuilder();
-			FileReader fileReader = new FileReader("fileAlbums.json");
-			for (String line = null; (line = new BufferedReader(fileReader).readLine()) != null;) {
-	            bu.append(line).append("\n");
-	        } 
-			
-			JSONObject jsonAlbums = new JSONObject(bu.toString());
-	
-			if(jsonAlbums != JSONObject.NULL) {
-	            albumMap = (Map<String, Map>) toMap(jsonAlbums);
-	        }
-			
-			int i=0 , size=0;
-			for (String key : albumMap.keySet()) 
-				size += albumMap.get(key).keySet().size();
-			for (String key : albumMap.keySet()) {
-				Collection map = albumMap.get(key).keySet();
-				for(Object values : map){
-					Map temp = getTracks((String) values);
-					trackMap.put((String) values, temp);
-					System.out.println(i++ + " of " + size);
-					sleep(500);
+			for (String key : albumMap.keySet()) { 
+				for(Object o : albumMap.get(key).keySet()){
+					Map temp = getTracks((String) o);
+					trackMap.put((String) o, temp);
 				}
 			}
 			
@@ -260,6 +239,27 @@ class Scraper extends Thread{
 			FileWriter fileTracks = new FileWriter("fileTracks.json");
 			fileTracks.write(jsonTracks.toString());
 			fileTracks.close();
+			
+			/*StringBuilder bu = new StringBuilder();
+			FileReader fileReader = new FileReader("fileTracks.json");
+			for (String line = null; (line = new BufferedReader(fileReader).readLine()) != null;) {
+	            bu.append(line).append("\n");
+	        } 
+			
+			JSONObject jsonTracks = new JSONObject(bu.toString());
+	
+			if(jsonTracks != JSONObject.NULL) {
+	            trackMap = (Map<String, Map>) toMap(jsonTracks);
+	        }
+			
+			int i=0 , size = trackMap.size();
+			for (String key : trackMap.keySet()) {
+				if(trackMap.get(key).isEmpty()){
+					Map temp = getTracks(key);
+					trackMap.put(key, temp);
+				}
+				System.out.println(i++ + " of " + size);
+			}*/				
 			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -379,7 +379,7 @@ class Scraper extends Thread{
 			e.printStackTrace();
 		} catch (Exception e) {
 			System.out.println("getAlbums < DUDE ERROR!"+e.getMessage());
-			sleep(500);
+			sleep(2000);
 		}
 
 		return temp;
@@ -430,9 +430,9 @@ class Scraper extends Thread{
 				JSONArray arr = obj.getJSONArray("data");
 				for (int i = 0; i < arr.length(); i++) {
 					String temp_title = (String) arr.getJSONObject(i).get("title");
-					System.out.println(artist_id + ">name>"+ temp_title);
+					//System.out.println(artist_id + ">name>"+ temp_title);
 					String temp_album_id = (String) arr.getJSONObject(i).get("id");
-					System.out.println(artist_id + ">id>" + temp_album_id);
+					//System.out.println(artist_id + ">id>" + temp_album_id);
 					temp.put(temp_album_id, temp_title);
 				}
 			}
@@ -498,13 +498,13 @@ class Scraper extends Thread{
 				JSONArray arr = obj.getJSONArray("data");
 				for (int i = 0; i < arr.length(); i++) {
 					String temp_artist_name = (String) arr.getJSONObject(i).get("name");
-					System.out.println(artist_id + ">name>" + temp_artist_name);
+					//System.out.println(artist_id + ">name>" + temp_artist_name);
 					String temp_artist_id = (String) arr.getJSONObject(i).get("id");
-					System.out.println(artist_id + ">id>" + temp_artist_id);
+					//System.out.println(artist_id + ">id>" + temp_artist_id);
 					
 					if (!artistMap.containsKey(temp_artist_id))
 						artistMap.put(temp_artist_id, temp_artist_name);
-					sleep(500);
+					
 					//getArtists(temp_artist_id, depth + 1);
 				}
 			}
