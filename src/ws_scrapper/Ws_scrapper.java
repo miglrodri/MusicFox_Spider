@@ -184,7 +184,7 @@ class Scraper extends Thread{
 	 * 
 	 * @return 
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked", "rawtypes", "resource" })
 	@Override
 	public void run(){
 		try {
@@ -205,6 +205,12 @@ class Scraper extends Thread{
 			}
 			
 			System.out.println("END SCRAPPING: got "+artistMap.size()+" entries");
+			
+			JSONObject jsonArtists = new JSONObject(artistMap);
+			FileWriter fileArtists = new FileWriter("fileArtists.json");
+			fileArtists.write(jsonArtists.toString());
+			fileArtists.close();
+			
 			System.out.println("SCRAPPING ALBUMS");
 			
 			for (String key : artistMap.keySet()) {
@@ -213,7 +219,14 @@ class Scraper extends Thread{
 				sleep(500);
 			}
 			
-			System.out.println("END SCRAPPING: got "+albumMap.size()+" entries");*/
+			System.out.println("END SCRAPPING: got "+albumMap.size()+" entries");
+			
+			JSONObject jsonAlbums = new JSONObject(albumMap);
+			FileWriter fileAlbums = new FileWriter("fileAlbums.json");
+			fileAlbums.write(jsonAlbums.toString());
+			fileAlbums.close();
+			
+			*/
 			System.out.println("SCRAPPING TRACKS");
 			
 			StringBuilder bu = new StringBuilder();
@@ -228,25 +241,21 @@ class Scraper extends Thread{
 	            albumMap = (Map<String, Map>) toMap(jsonAlbums);
 	        }
 			
+			int i=0 , size=0;
+			for (String key : albumMap.keySet()) 
+				size += albumMap.get(key).keySet().size();
 			for (String key : albumMap.keySet()) {
 				Collection map = albumMap.get(key).keySet();
 				for(Object values : map){
 					Map temp = getTracks((String) values);
 					trackMap.put(key, temp);
+					System.out.println(i++ + " of " + size);
 					sleep(500);
 				}
+				
 			}
 			
 			System.out.println("END SCRAPPING: got "+trackMap.size()+" entries");
-			
-			/*JSONObject jsonArtists = new JSONObject(artistMap);
-			FileWriter fileArtists = new FileWriter("fileArtists.json");
-			fileArtists.write(jsonArtists.toString());
-			fileArtists.close();
-			JSONObject jsonAlbums = new JSONObject(albumMap);
-			FileWriter fileAlbums = new FileWriter("fileAlbums.json");
-			fileAlbums.write(jsonAlbums.toString());
-			fileAlbums.close();*/
 			
 			JSONObject jsonTracks = new JSONObject(trackMap);
 			FileWriter fileTracks = new FileWriter("fileTracks.json");
@@ -356,9 +365,9 @@ class Scraper extends Thread{
 				JSONArray arr = obj.getJSONArray("data");
 				for (int i = 0; i < arr.length(); i++) {
 					String temp_title = (String) arr.getJSONObject(i).get("title");
-					System.out.println(album_id + ">name>"+ temp_title);
+					//System.out.println(album_id + ">name>"+ temp_title);
 					String temp_track_id = (String) arr.getJSONObject(i).get("id");
-					System.out.println(album_id + ">id>" + temp_track_id);
+					//System.out.println(album_id + ">id>" + temp_track_id);
 					temp.put(temp_track_id, temp_title);
 				}
 			}
