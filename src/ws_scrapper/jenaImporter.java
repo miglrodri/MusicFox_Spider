@@ -9,33 +9,39 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.ontology.Individual;
+import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.util.FileManager;
 
 public class jenaImporter {
 
 	private String inputFileName = "MusicOntology.owl";
-	String SOURCE = "http://www.semanticweb.org/MusicOntology";
+	private String SOURCE = "http://www.semanticweb.org/MusicOntology";
 	private String NS = SOURCE + "#";
 	private String outFileName = "MusicOntologyWithIndividuals.owl";
-
+	private final InputStream inputStream = FileManager.get().open(inputFileName);
+	private final OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, null);
+	private ObjectProperty isAssembledBy, producesAlbum, isPartOf, hasTrack, isCreatedBy, writesTrack;
+	
 	void main() throws FileNotFoundException {
 
-		final InputStream inputStream = FileManager.get().open(inputFileName);
-		OntModel model = ModelFactory.createOntologyModel(
-				OntModelSpec.OWL_DL_MEM, null);
-		model.read(inputStream, SOURCE);
-
 		try {
+			model.read(inputStream, SOURCE);
+			
+			isAssembledBy = model.getObjectProperty(NS+"isAssembledBy");
+			producesAlbum = model.getObjectProperty(NS+"producesAlbum");
+			isPartOf = model.getObjectProperty(NS+"isPartOf");
+			hasTrack = model.getObjectProperty(NS+"hasTrack");
+			isCreatedBy = model.getObjectProperty(NS+"isCreatedBy");
+			writesTrack = model.getObjectProperty(NS+"writesTrack");
+			
 			FileInputStream fis = new FileInputStream("artists.ser");
 			ObjectInputStream ois = new ObjectInputStream(fis);
 			Map<?, ?> artistMap = (Map<?, ?>) ois.readObject();
@@ -66,11 +72,10 @@ public class jenaImporter {
 			
 			populateTracks(model, tracksMap);
 
-			
-			
 			FileWriter out = new FileWriter(outFileName);
 			model.write( out, "Turtle" );
 			
+		
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			return;
@@ -98,13 +103,37 @@ public class jenaImporter {
 			Literal gender = model.createTypedLiteral(values.get("gender"),XSDDatatype.XSDstring);
 			
 			values = (Map<?, ?>) statsMap.get(_id);
-			//TODO como vai ser isto??
-			
-			
-			statements.add(model.createStatement(artistIndividual,model.getProperty("hasName"), name));
-			statements.add(model.createStatement(artistIndividual,model.getProperty("hasMainGenre"), mainGenre));
-			statements.add(model.createStatement(artistIndividual,model.getProperty("hasDecade"), decade));
-			statements.add(model.createStatement(artistIndividual,model.getProperty("hasGender"), gender));
+			/*for(Object e : statsMap.keySet()){
+				switch((String)e) {
+				case "vevo":
+					Map<String, String> vevoValues = (Map<String, String>) statsMap.get("vevo");
+					Literal url = model.createTypedLiteral(vevoValues.get("url"),XSDDatatype.XSDstring);
+					Literal viewsLastMonth = model.createTypedLiteral(vevoValues.get("viewsLastMonth"),XSDDatatype.XSDinteger);
+					Literal viewsTotal = model.createTypedLiteral(vevoValues.get("viewsTotal"),XSDDatatype.XSDinteger);
+					Resource vevoStats = artistIndividual.setPropertyValue(model.getProperty(NS+"hasVevoStats"), NS+"hasVevoStats");
+					Statement hasVevoUrl = model.createStatement(vevoStats, model.getProperty(NS+"hasVevoUrl"), url);
+					Statement hasVevoViewsLastMonth = model.createStatement(vevoStats, model.getProperty(NS+"hasVevoViewsLastMonth"), viewsLastMonth);
+					Statement hasVevoViewsTotal = model.createStatement(vevoStats, model.getProperty(NS+"hasVevoViewsTotal"), viewsTotal);
+					
+					break;
+				case "twitter":
+					Map<String, String> twitterValues = (Map<String, String>) statsMap.get("vevo");
+					Literal url = model.createTypedLiteral(twitterValues.get("url"),XSDDatatype.XSDstring);
+					Literal followers = model.createTypedLiteral(twitterValues.get("followers"),XSDDatatype.XSDinteger);
+					Resource twitterStats = artistIndividual.setPropertyValue(model.getProperty(NS+"hasVevoStats"), NS+"hasVevoStats");
+					Statement hasVevoUrl = model.createStatement(twitterStats, model.getProperty(NS+"hasVevoUrl"), url);
+					Statement hasVevoViewsLastMonth = model.createStatement(twitterStats, model.getProperty(NS+"hasVevoViewsLastMonth"), viewsLastMonth);
+					break;
+				case "facebook":
+					break;
+				case "lastfm":
+					break;
+				}
+			}*/
+			statements.add(model.createStatement(artistIndividual,model.getProperty(NS+"hasName"), name));
+			statements.add(model.createStatement(artistIndividual,model.getProperty(NS+"hasMainGenre"), mainGenre));
+			statements.add(model.createStatement(artistIndividual,model.getProperty(NS+"hasDecade"), decade));
+			statements.add(model.createStatement(artistIndividual,model.getProperty(NS+"hasGender"), gender));
 			model.add(statements);
 		}
 		
@@ -114,7 +143,6 @@ public class jenaImporter {
 	int populateAlbums(OntModel model, Map<?, ?> albumsMap) {
 
 		OntClass album = model.getOntClass(NS + "Album");
-		Property property = model.getProperty("isAssembledBy");
 		
 		for (Object _id : albumsMap.keySet()) {	
 			String id = (String) _id;
@@ -131,11 +159,13 @@ public class jenaImporter {
 				Literal releasedate = model.createTypedLiteral(albumValues.get("release_date"), XSDDatatype.XSDdateTime);
 				Literal title = model.createTypedLiteral(albumValues.get("title"),XSDDatatype.XSDstring);
 				
-				statements.add(model.createStatement(albumIndividual, property, NS+id));
-				statements.add(model.createStatement(albumIndividual,model.getProperty("hasDecade"), decade));
-				statements.add(model.createStatement(albumIndividual, model.getProperty("hasReleaseDate"),releasedate));
-				statements.add(model.createStatement(albumIndividual,model.getProperty("hasNumberOfTracks"), numberOfTracks));
-				statements.add(model.createStatement(albumIndividual,model.getProperty("hasTitle"), title));
+				statements.add(model.createStatement(albumIndividual, isAssembledBy, model.getIndividual(NS+id)));
+				
+				statements.add(model.createStatement(model.getIndividual(NS+id), producesAlbum, albumIndividual));
+				statements.add(model.createStatement(albumIndividual,model.getDatatypeProperty(NS+"hasDecade"), decade));
+				statements.add(model.createStatement(albumIndividual, model.getDatatypeProperty(NS+"hasReleaseDate"),releasedate));
+				statements.add(model.createStatement(albumIndividual,model.getDatatypeProperty(NS+"hasNumberOfTracks"), numberOfTracks));
+				statements.add(model.createStatement(albumIndividual,model.getDatatypeProperty(NS+"hasTitle"), title));
 				model.add(statements);
 			}
 		}
@@ -146,8 +176,8 @@ public class jenaImporter {
 	int populateTracks(OntModel model, Map<?, ?> tracksMap) {
 
 		OntClass track = model.getOntClass(NS + "Track");
-		Property property = model.getProperty("isAssembledBy");
-
+	
+		
 		for (Object _id : tracksMap.keySet()) {
 			String id = (String) _id;
 			Map<?, ?> values = (Map<?, ?>) tracksMap.get(_id);
@@ -157,15 +187,17 @@ public class jenaImporter {
 				List<Statement> statements = new ArrayList<Statement>();
 				
 				Individual trackIndividual = track.createIndividual(NS + trackID);
+				// TODO get artist individual to set object properties
 				
-				trackIndividual.addProperty(property, NS + id);
 				Literal duration = model.createTypedLiteral(trackValues.get("duration"),XSDDatatype.XSDinteger);
 				Literal trackindex = model.createTypedLiteral(trackValues.get("track_index"), XSDDatatype.XSDinteger);
 				Literal title = model.createTypedLiteral(trackValues.get("title"),XSDDatatype.XSDstring);
 				
-				statements.add(model.createStatement(trackIndividual,model.getProperty("hasDuration"), duration));
-				statements.add(model.createStatement(trackIndividual, model.getProperty("hasTrackIndex"),trackindex));
-				statements.add(model.createStatement(trackIndividual,model.getProperty("hasTitle"), title));
+				statements.add(model.createStatement(trackIndividual, isPartOf, model.getIndividual(NS+id)));
+				statements.add(model.createStatement(model.getIndividual(NS+id), hasTrack, trackIndividual));
+				statements.add(model.createStatement(trackIndividual,model.getDatatypeProperty(NS+"hasDuration"), duration));
+				statements.add(model.createStatement(trackIndividual, model.getDatatypeProperty(NS+"hasTrackIndex"),trackindex));
+				statements.add(model.createStatement(trackIndividual,model.getDatatypeProperty(NS+"hasTitle"), title));
 				model.add(statements);
 			}
 		}
