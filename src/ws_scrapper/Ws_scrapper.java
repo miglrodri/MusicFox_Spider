@@ -1,6 +1,7 @@
 package ws_scrapper;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,9 +22,16 @@ import org.json.JSONObject;
 
 public class Ws_scrapper {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
-		new Scraper().start();
+		org.apache.log4j.BasicConfigurator.configure();
+		//new Scraper().start();
+		try {
+			new jenaImporter().main();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 }
@@ -154,6 +162,8 @@ class Scraper extends Thread {
 	private Map<String, Map> albumMap = new HashMap<String, Map>();
 	@SuppressWarnings("rawtypes")
 	private Map<String, Map> trackMap = new HashMap<String, Map>();
+	@SuppressWarnings("rawtypes")
+	private Map<String, Map> statsMap = new HashMap<String, Map>();
 
 	/**
 	 * Thread start point
@@ -191,6 +201,11 @@ class Scraper extends Thread {
 			oos.flush();
 			oos.close();
 
+			oos = new ObjectOutputStream(new FileOutputStream("stats.ser"));
+			oos.writeObject(statsMap);
+			oos.flush();
+			oos.close();
+			
 			System.out.println("SCRAPPING ALBUMS");
 
 			for (String key : artistMap.keySet()) {
@@ -472,7 +487,7 @@ class Scraper extends Thread {
 		try {
 			String url = "http://api.musicgraph.com/api/v2/artist/";
 			url += artist_id;
-			url += "/similar?api_key=" + api_key + "&limit=1";
+			url += "/similar?api_key=" + api_key + "&limit=15";
 
 			System.out.println(url);
 			
@@ -532,7 +547,7 @@ class Scraper extends Thread {
 	
 						if (!artistMap.containsKey(temp_artist_id)) {
 							artistMap.put(temp_artist_id, tempMap);
-							artistMap.put(temp_artist_id, temp_stats);
+							statsMap.put(temp_artist_id, temp_stats);
 						}
 						// getArtists(temp_artist_id, depth + 1);
 					}

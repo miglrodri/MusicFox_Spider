@@ -1,0 +1,708 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.semanticweb.org/MusicOntology#"
+     xml:base="http://www.semanticweb.org/MusicOntology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/MusicOntology">
+        <rdfs:comment>This is an Ontology for Music. Contains information about Artists, Albums and Tracks.</rdfs:comment>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#has -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/MusicOntology#has">
+        <rdfs:comment>This object property represents: &quot;An Album has a Track&quot;.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Album"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/MusicOntology#Track"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/MusicOntology#isPartOf"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#isAssembledBy -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/MusicOntology#isAssembledBy">
+        <rdfs:comment>This object property represents: &quot;An Album is assembled by an Artist&quot;.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Album"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#isCreatedBy -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/MusicOntology#isCreatedBy">
+        <rdfs:comment>This object property represents: &quot;A Track is created by an Artist&quot;.</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Track"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#isPartOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/MusicOntology#isPartOf">
+        <rdfs:comment>This object property represents: &quot;A Track is part of an Album&quot;.</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/MusicOntology#Album"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Track"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#produces -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/MusicOntology#produces">
+        <rdfs:comment>This object property represents: &quot;An Artist produces an Album&quot;.</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/MusicOntology#Album"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/MusicOntology#isAssembledBy"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#writes -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/MusicOntology#writes">
+        <rdfs:comment>This object property represents: &quot;An Artist writes a Track&quot;.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/MusicOntology#Track"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/MusicOntology#isCreatedBy"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasDecade -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasDecade">
+        <rdfs:comment xml:lang="en">Represent decades since 1980s to 2010s. Can be from an artist or from album and maybe more than one.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Album"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:range>
+            <rdfs:Datatype>
+                <owl:oneOf>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&rdf;List"/>
+                        <rdf:first>1890s</rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="&rdf;List"/>
+                                <rdf:first>1900s</rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="&rdf;List"/>
+                                        <rdf:first>1910s</rdf:first>
+                                        <rdf:rest>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="&rdf;List"/>
+                                                <rdf:first>1920s</rdf:first>
+                                                <rdf:rest>
+                                                    <rdf:Description>
+                                                        <rdf:type rdf:resource="&rdf;List"/>
+                                                        <rdf:first>1930s</rdf:first>
+                                                        <rdf:rest>
+                                                            <rdf:Description>
+                                                                <rdf:type rdf:resource="&rdf;List"/>
+                                                                <rdf:first>1940s</rdf:first>
+                                                                <rdf:rest>
+                                                                    <rdf:Description>
+                                                                        <rdf:type rdf:resource="&rdf;List"/>
+                                                                        <rdf:first>1950s</rdf:first>
+                                                                        <rdf:rest>
+                                                                            <rdf:Description>
+                                                                                <rdf:type rdf:resource="&rdf;List"/>
+                                                                                <rdf:first>1960s</rdf:first>
+                                                                                <rdf:rest>
+                                                                                    <rdf:Description>
+                                                                                        <rdf:type rdf:resource="&rdf;List"/>
+                                                                                        <rdf:first>1970s</rdf:first>
+                                                                                        <rdf:rest>
+                                                                                            <rdf:Description>
+                                                                                                <rdf:type rdf:resource="&rdf;List"/>
+                                                                                                <rdf:first>1980s</rdf:first>
+                                                                                                <rdf:rest>
+                                                                                                    <rdf:Description>
+                                                                                                        <rdf:type rdf:resource="&rdf;List"/>
+                                                                                                        <rdf:first>1990s</rdf:first>
+                                                                                                        <rdf:rest>
+                                                                                                            <rdf:Description>
+                                                                                                                <rdf:type rdf:resource="&rdf;List"/>
+                                                                                                                <rdf:first>2000s</rdf:first>
+                                                                                                                <rdf:rest>
+                                                                                                                    <rdf:Description>
+                                                                                                                        <rdf:type rdf:resource="&rdf;List"/>
+                                                                                                                        <rdf:first>2010s</rdf:first>
+                                                                                                                        <rdf:rest rdf:resource="&rdf;nil"/>
+                                                                                                                    </rdf:Description>
+                                                                                                                </rdf:rest>
+                                                                                                            </rdf:Description>
+                                                                                                        </rdf:rest>
+                                                                                                    </rdf:Description>
+                                                                                                </rdf:rest>
+                                                                                            </rdf:Description>
+                                                                                        </rdf:rest>
+                                                                                    </rdf:Description>
+                                                                                </rdf:rest>
+                                                                            </rdf:Description>
+                                                                        </rdf:rest>
+                                                                    </rdf:Description>
+                                                                </rdf:rest>
+                                                            </rdf:Description>
+                                                        </rdf:rest>
+                                                    </rdf:Description>
+                                                </rdf:rest>
+                                            </rdf:Description>
+                                        </rdf:rest>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </owl:oneOf>
+            </rdfs:Datatype>
+        </rdfs:range>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasDuration -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasDuration">
+        <rdfs:comment xml:lang="en">Represents the duration from the track.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Track"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasFacebookLikes -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasFacebookLikes">
+        <rdfs:comment xml:lang="en">Represents the count of Likes on the artist&apos;s Facebook page.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/MusicOntology#hasFacebookStats"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasFacebookPeopleTalkingAbout -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasFacebookPeopleTalkingAbout">
+        <rdfs:comment xml:lang="en">Represents the count of people talking about the artist&apos;s Facebook page.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/MusicOntology#hasFacebookStats"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasFacebookStats -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasFacebookStats">
+        <rdfs:comment xml:lang="en">Property which contains Facebook metrics statistics.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasFacebookUrl -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasFacebookUrl">
+        <rdfs:comment xml:lang="en">Represents theURL of the artist&apos;s Facebook page.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/MusicOntology#hasFacebookStats"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasGender -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasGender">
+        <rdfs:comment xml:lang="en">Represents the gender of the artist.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:range>
+            <rdfs:Datatype>
+                <owl:oneOf>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&rdf;List"/>
+                        <rdf:first>both</rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="&rdf;List"/>
+                                <rdf:first>female</rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="&rdf;List"/>
+                                        <rdf:first>male</rdf:first>
+                                        <rdf:rest rdf:resource="&rdf;nil"/>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </owl:oneOf>
+            </rdfs:Datatype>
+        </rdfs:range>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasLastFMListeners -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasLastFMListeners">
+        <rdfs:comment xml:lang="en">Represents the count of listeners of the artist&apos;s LastFM page.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/MusicOntology#hasLastFMStats"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasLastFMPlayCount -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasLastFMPlayCount">
+        <rdfs:comment xml:lang="en">Represents the count of plays of the artist&apos;s LastFM page.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/MusicOntology#hasLastFMStats"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasLastFMStats -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasLastFMStats">
+        <rdfs:comment xml:lang="en">Property which contains LastFM metrics statistics.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasLastFMUrl -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasLastFMUrl">
+        <rdfs:comment xml:lang="en">Represents the URL of the artist&apos;s LastFM page.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/MusicOntology#hasLastFMStats"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasMainGenre -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasMainGenre">
+        <rdfs:comment xml:lang="en">Represents the main genre of the artist. It may contain more than one genre.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:range>
+            <rdfs:Datatype>
+                <owl:oneOf>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="&rdf;List"/>
+                        <rdf:first>Blues</rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="&rdf;List"/>
+                                <rdf:first>Country</rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="&rdf;List"/>
+                                        <rdf:first>Easy Listening</rdf:first>
+                                        <rdf:rest>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="&rdf;List"/>
+                                                <rdf:first>Electronic</rdf:first>
+                                                <rdf:rest>
+                                                    <rdf:Description>
+                                                        <rdf:type rdf:resource="&rdf;List"/>
+                                                        <rdf:first>International</rdf:first>
+                                                        <rdf:rest>
+                                                            <rdf:Description>
+                                                                <rdf:type rdf:resource="&rdf;List"/>
+                                                                <rdf:first>Jazz</rdf:first>
+                                                                <rdf:rest>
+                                                                    <rdf:Description>
+                                                                        <rdf:type rdf:resource="&rdf;List"/>
+                                                                        <rdf:first>Pop/Rock</rdf:first>
+                                                                        <rdf:rest>
+                                                                            <rdf:Description>
+                                                                                <rdf:type rdf:resource="&rdf;List"/>
+                                                                                <rdf:first>R&amp;B</rdf:first>
+                                                                                <rdf:rest>
+                                                                                    <rdf:Description>
+                                                                                        <rdf:type rdf:resource="&rdf;List"/>
+                                                                                        <rdf:first>Reggae</rdf:first>
+                                                                                        <rdf:rest rdf:resource="&rdf;nil"/>
+                                                                                    </rdf:Description>
+                                                                                </rdf:rest>
+                                                                            </rdf:Description>
+                                                                        </rdf:rest>
+                                                                    </rdf:Description>
+                                                                </rdf:rest>
+                                                            </rdf:Description>
+                                                        </rdf:rest>
+                                                    </rdf:Description>
+                                                </rdf:rest>
+                                            </rdf:Description>
+                                        </rdf:rest>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </owl:oneOf>
+            </rdfs:Datatype>
+        </rdfs:range>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasName">
+        <rdfs:comment xml:lang="en">Represents the artist&apos;s name.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasNumberOfTracks -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasNumberOfTracks">
+        <rdfs:comment xml:lang="en">Represents the number of tracks an album contain.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Album"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasReleaseDate -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasReleaseDate">
+        <rdfs:comment xml:lang="en">Represents the release date of an album.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Album"/>
+        <rdfs:range rdf:resource="&xsd;dateTime"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasTitle -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasTitle">
+        <rdfs:comment xml:lang="en">Represents the title of the album or the track.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Album"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Track"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasTrackIndex -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasTrackIndex">
+        <rdfs:comment xml:lang="en">Represents the index of the track on the album.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Track"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasTwitterFollowers -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasTwitterFollowers">
+        <rdfs:comment xml:lang="en">Represents the count of followers of the artist&apos;s Twitter page.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/MusicOntology#hasTwitterStats"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasTwitterStats -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasTwitterStats">
+        <rdfs:comment xml:lang="en">Property which contains Twitter metrics statistics.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasTwitterUrl -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasTwitterUrl">
+        <rdfs:comment xml:lang="en">Represents the URL of the artist&apos;s Twitter page.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/MusicOntology#hasTwitterStats"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasVevoStats -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasVevoStats">
+        <rdfs:comment xml:lang="en">Property which contains Vevo metrics statistics.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="&owl;topDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasVevoUrl -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasVevoUrl">
+        <rdfs:comment xml:lang="en">Represents the URL of the artist&apos;s Vevo page.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/MusicOntology#hasVevoStats"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasVevoViewsLastMonth -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasVevoViewsLastMonth">
+        <rdfs:comment xml:lang="en">Represents the count of view on the last month of the artist&apos;s Vevo page.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/MusicOntology#hasVevoStats"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#hasVevoViewsTotal -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/MusicOntology#hasVevoViewsTotal">
+        <rdfs:comment xml:lang="en">Represents the total count of views of the artist&apos;s Vevo page.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/MusicOntology#hasVevoStats"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#Album -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/MusicOntology#Album">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasNumberOfTracks"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;integer"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasReleaseDate"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;dateTime"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasDecade"/>
+                <owl:minQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minQualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasTitle"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#isAssembledBy"/>
+                <owl:onClass rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#has"/>
+                <owl:onClass rdf:resource="http://www.semanticweb.org/MusicOntology#Track"/>
+                <owl:minQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minQualifiedCardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>Represents the Album class. An Album is created by an Artist and it features various Tracks.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#Artist -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/MusicOntology#Artist">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasTwitterStats"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;anyURI"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#writes"/>
+                <owl:onClass rdf:resource="http://www.semanticweb.org/MusicOntology#Track"/>
+                <owl:minQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minQualifiedCardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasFacebookStats"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;anyURI"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasLastFMStats"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;anyURI"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasMainGenre"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasDecade"/>
+                <owl:minQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minQualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasName"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#produces"/>
+                <owl:onClass rdf:resource="http://www.semanticweb.org/MusicOntology#Album"/>
+                <owl:minQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minQualifiedCardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasVevoStats"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;anyURI"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasGender"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>Represents the Artist class. An Artist have Albums and Tracks associated.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/MusicOntology#Track -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/MusicOntology#Track">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasTitle"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasTrackIndex"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;integer"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#isCreatedBy"/>
+                <owl:onClass rdf:resource="http://www.semanticweb.org/MusicOntology#Artist"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#isPartOf"/>
+                <owl:onClass rdf:resource="http://www.semanticweb.org/MusicOntology#Album"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/MusicOntology#hasDuration"/>
+                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="&xsd;integer"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>Represents the Track class. A Track is associated with an Artist and it features on an Album.</rdfs:comment>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.5.0) http://owlapi.sourceforge.net -->
+
