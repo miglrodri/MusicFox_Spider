@@ -25,13 +25,13 @@ public class Ws_scrapper {
 	public static void main(String[] args) {
 
 		org.apache.log4j.BasicConfigurator.configure();
-		//new Scraper().start();
-		try {
-			new jenaImporter().main();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		new Scraper().start();
+//		try {
+//			new jenaImporter().main();
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 	}
 }
@@ -227,10 +227,10 @@ class Scraper extends Thread {
 
 			System.out.println("SCRAPPING TRACKS");
 
-			for (String key : albumMap.keySet()) {
-				for (Object o : albumMap.get(key).keySet()) {
-					Map temp = getTracks((String) o);
-					trackMap.put((String) o, temp);
+			for (String artistid : albumMap.keySet()) {
+				for (Object albumid : albumMap.get(artistid).keySet()) {
+					Map temp = getTracks((String) albumid, artistid);
+					trackMap.put((String) albumid, temp);
 				}
 			}
 
@@ -309,7 +309,7 @@ class Scraper extends Thread {
 	 * @throws InterruptedException
 	 */
 	@SuppressWarnings("rawtypes")
-	private Map<String, Map> getTracks(String album_id)
+	private Map<String, Map> getTracks(String album_id, String artist_id)
 			throws InterruptedException {
 
 		Map<String, Map> temp = new HashMap<String, Map>();
@@ -317,7 +317,7 @@ class Scraper extends Thread {
 		try {
 			String url = "http://api.musicgraph.com/api/v2/album/";
 			url += album_id;
-			url += "/tracks?api_key=" + api_key + "&limit=10";
+			url += "/tracks?api_key=" + api_key + "&limit=100";
 
 			URL obj_url = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj_url
@@ -364,6 +364,7 @@ class Scraper extends Thread {
 						aux.put("title", temp_title);
 						aux.put("track_index", temp_trackindex);
 						aux.put("duration", temp_duration);
+						aux.put("artist_id", artist_id);
 	
 						temp.put(temp_track_id, aux);
 					}
@@ -399,7 +400,7 @@ class Scraper extends Thread {
 		try {
 			String url = "http://api.musicgraph.com/api/v2/artist/";
 			url += artist_id;
-			url += "/albums?api_key=" + api_key + "&limit=10";
+			url += "/albums?api_key=" + api_key + "&limit=100";
 
 			URL obj_url = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj_url
@@ -468,6 +469,63 @@ class Scraper extends Thread {
 
 		return temp;
 	}
+	
+	/**
+	 * Get number of albums for an artist
+	 * @param artist_id
+	 */
+	public boolean getAlbumCount(String artist_id) {
+		try {
+			String url = "http://api.musicgraph.com/api/v2/artist/";
+			url += artist_id;
+			url += "/albums?api_key=" + api_key;
+
+			//System.out.println(url);
+			
+			URL obj_url = new URL(url);
+			HttpURLConnection con = (HttpURLConnection) obj_url
+					.openConnection();
+
+			con.setRequestMethod("GET");
+
+			con.setRequestProperty("User-Agent", "Mozilla/5.0");
+
+			int responseCode = con.getResponseCode();
+
+			if (responseCode != 200)
+				throw new Exception("Error " + responseCode);
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			JSONObject obj = new JSONObject(response.toString());
+			String message = obj.getJSONObject("status").getString("message");
+
+			//System.out.println(response.toString());
+
+			if (message.equals("Success")) {
+				JSONObject arr = obj.getJSONObject("pagination");
+				return (int)arr.get("total") != 0;
+			}
+			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (ProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			System.out.println("getArtists < DUDE ERROR!" + e.getMessage());
+		}
+		return false;
+	}
 
 	/**
 	 * Get a list of artists similar to given artist
@@ -482,14 +540,11 @@ class Scraper extends Thread {
 			return;
 		}
 
-		Map<String, String> tempMap = new HashMap<String, String>();
-
 		try {
 			String url = "http://api.musicgraph.com/api/v2/artist/";
 			url += artist_id;
-			url += "/similar?api_key=" + api_key + "&limit=15";
-
-			System.out.println(url);
+			url += "/similar?api_key=" + api_key + "&limit=25";
+			//System.out.println(url);
 			
 			URL obj_url = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj_url
@@ -523,33 +578,43 @@ class Scraper extends Thread {
 				JSONArray arr = obj.getJSONArray("data");
 				for (int i = 0; i < arr.length(); i++) {
 					if(arr.getJSONObject(i).has("main_genre") && arr.getJSONObject(i).has("decade") && arr.getJSONObject(i).has("gender")){
-						String temp_artist_name = ""
-								+ arr.getJSONObject(i).get("name");
-						// System.out.println(artist_id + ">name>" +
-						// temp_artist_name);
-						String temp_artist_id = (String) arr.getJSONObject(i).get(
-								"id");
-						// System.out.println(artist_id + ">id>" + temp_artist_id);
-						String temp_maingenre = ""
-						 		+ arr.getJSONObject(i).get("main_genre");
-						String temp_decade = ""
-								+ arr.getJSONObject(i).get("decade");
-	
-						String temp_gender = ""
-								+ arr.getJSONObject(i).get("gender");
-	
-						Map<String, Map> temp_stats = getStats(temp_artist_id);
-	
-						tempMap.put("name", temp_artist_name);
-						tempMap.put("main_genre", temp_maingenre);
-						tempMap.put("decade", temp_decade);
-						tempMap.put("gender", temp_gender);
-	
-						if (!artistMap.containsKey(temp_artist_id)) {
-							artistMap.put(temp_artist_id, tempMap);
-							statsMap.put(temp_artist_id, temp_stats);
+						if (getAlbumCount((String) arr.getJSONObject(i).get(
+								"id"))) {
+						
+							Map<String, String> tempMap = new HashMap<String, String>();
+							
+							String temp_artist_name = ""
+									+ arr.getJSONObject(i).get("name");
+							// System.out.println(artist_id + ">name>" +
+							// temp_artist_name);
+							String temp_artist_id = (String) arr.getJSONObject(i).get(
+									"id");
+							// System.out.println(artist_id + ">id>" + temp_artist_id);
+							String temp_maingenre = ""
+							 		+ arr.getJSONObject(i).get("main_genre");
+							String temp_decade = ""
+									+ arr.getJSONObject(i).get("decade");
+		
+							String temp_gender = ""
+									+ arr.getJSONObject(i).get("gender");
+		
+							Map<String, Map> temp_stats = getStats(temp_artist_id);
+		
+							tempMap.put("name", temp_artist_name);
+							tempMap.put("main_genre", temp_maingenre);
+							tempMap.put("decade", temp_decade);
+							tempMap.put("gender", temp_gender);
+		
+							if (!artistMap.containsKey(temp_artist_id)) {
+								artistMap.put(temp_artist_id, tempMap);
+								System.out.print("id:"+temp_artist_id);
+								System.out.println(" \\ name: "+temp_artist_name);
+								statsMap.put(temp_artist_id, temp_stats);
+							}
+							//getArtists(temp_artist_id, depth + 1);
+							
 						}
-						// getArtists(temp_artist_id, depth + 1);
+						
 					}
 				}
 			}
