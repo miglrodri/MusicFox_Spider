@@ -25,13 +25,13 @@ public class Ws_scrapper {
 	public static void main(String[] args) {
 
 		org.apache.log4j.BasicConfigurator.configure();
-		new Scraper().start();
-//		try {
-//			new jenaImporter().main();
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		// new Scraper().start();
+		try {
+			new jenaImporter().main();
+		} catch (FileNotFoundException e) {
+			// // TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 }
@@ -188,14 +188,16 @@ class Scraper extends Thread {
 				getArtists(rap[i], 0);
 				getArtists(reggae[i], 0);
 			}
+			/*FileInputStream fis = new FileInputStream("artists.ser");
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			artistMap = (Map<String, Map>) ois.readObject();
+			ois.close();
+			fis.close();*/
 
 			System.out.println("END SCRAPPING: got " + artistMap.size()
 					+ " entries");
 
-			/*JSONObject jsonArtists = new JSONObject(artistMap);
-			FileWriter fileArtists = new FileWriter("fileArtists.json");
-			fileArtists.write(jsonArtists.toString());
-			fileArtists.close();*/
+			
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("artists.ser"));
 			oos.writeObject(artistMap);
 			oos.flush();
@@ -216,10 +218,6 @@ class Scraper extends Thread {
 			System.out.println("END SCRAPPING: got " + albumMap.size()
 					+ " entries");
 
-			/*JSONObject jsonAlbums = new JSONObject(albumMap);
-			FileWriter fileAlbums = new FileWriter("fileAlbums.json");
-			fileAlbums.write(jsonAlbums.toString());
-			fileAlbums.close();*/
 			oos = new ObjectOutputStream(new FileOutputStream("albums.ser"));
 			oos.writeObject(albumMap);
 			oos.flush();
@@ -237,10 +235,6 @@ class Scraper extends Thread {
 			System.out.println("END SCRAPPING: got " + trackMap.size()
 					+ " entries");
 
-			/*JSONObject jsonTracks = new JSONObject(trackMap);
-			FileWriter fileTracks = new FileWriter("fileTracks.json");
-			fileTracks.write(jsonTracks.toString());
-			fileTracks.close();*/
 			oos = new ObjectOutputStream(new FileOutputStream("tracks.ser"));
 			oos.writeObject(trackMap);
 			oos.flush();
@@ -366,6 +360,9 @@ class Scraper extends Thread {
 						aux.put("duration", temp_duration);
 						aux.put("artist_id", artist_id);
 	
+						System.out.print("id:"+temp_track_id);
+						System.out.println(" \\ title: "+temp_title);
+						
 						temp.put(temp_track_id, aux);
 					}
 				}
@@ -431,7 +428,8 @@ class Scraper extends Thread {
 			if (message.equals("Success")) {
 				JSONArray arr = obj.getJSONArray("data");
 				for (int i = 0; i < arr.length(); i++) {
-					if(arr.getJSONObject(i).has("release_date") && arr.getJSONObject(i).has("number_of_tracks") && arr.getJSONObject(i).has("decade")){
+					if(arr.getJSONObject(i).has("release_date") && arr.getJSONObject(i).has("number_of_tracks") 
+							&& arr.getJSONObject(i).has("decade")){
 						Map<String, String> aux = new HashMap<String, String>();
 	
 						String temp_title = "" + arr.getJSONObject(i).get("title");
@@ -450,6 +448,10 @@ class Scraper extends Thread {
 						aux.put("number_of_tracks", temp_numberoftracks);
 						aux.put("decade", temp_decade);
 	
+						
+						System.out.print("id:"+temp_album_id);
+						System.out.println(" \\ title: "+temp_title);
+						
 						if (!temp_numberoftracks.equals("0"))
 							temp.put(temp_album_id, aux);
 					}
@@ -577,7 +579,8 @@ class Scraper extends Thread {
 			if (message.equals("Success")) {
 				JSONArray arr = obj.getJSONArray("data");
 				for (int i = 0; i < arr.length(); i++) {
-					if(arr.getJSONObject(i).has("main_genre") && arr.getJSONObject(i).has("decade") && arr.getJSONObject(i).has("gender")){
+					if(arr.getJSONObject(i).has("main_genre") && arr.getJSONObject(i).has("decade") 
+							&& arr.getJSONObject(i).has("gender")){
 						if (getAlbumCount((String) arr.getJSONObject(i).get(
 								"id"))) {
 						
