@@ -520,7 +520,7 @@ class Scraper extends Thread {
 		try {
 			String url = "http://api.musicgraph.com/api/v2/artist/";
 			url += artist_id;
-			url += "/similar?api_key=" + api_key + "&limit=7";
+			url += "/similar?api_key=" + api_key + "&limit=10";
 			// System.out.println(url);
 
 			URL obj_url = new URL(url);
