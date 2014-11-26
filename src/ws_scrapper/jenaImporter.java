@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntClass;
@@ -59,22 +60,22 @@ public class jenaImporter {
 			isCreatedBy = model.getObjectProperty(NS + "isCreatedBy");
 			writesTrack = model.getObjectProperty(NS + "writesTrack");
 
-			hasVevoUrl = model.getProperty(NS + "hasVevoUrl");
-			hasVevoViewsLastMonth = model.getProperty(NS
+			hasVevoUrl = model.getDatatypeProperty(NS + "hasVevoUrl");
+			hasVevoViewsLastMonth = model.getDatatypeProperty(NS
 					+ "hasVevoViewsLastMonth");
-			hasVevoViewsTotal = model.getProperty(NS + "hasVevoViewsTotal");
+			hasVevoViewsTotal = model.getDatatypeProperty(NS + "hasVevoViewsTotal");
 
-			hasTwitterUrl = model.getProperty(NS + "hasTwitterUrl");
-			hasTwitterFollowers = model.getProperty(NS + "hasTwitterFollowers");
+			hasTwitterUrl = model.getDatatypeProperty(NS + "hasTwitterUrl");
+			hasTwitterFollowers = model.getDatatypeProperty(NS + "hasTwitterFollowers");
 
-			hasFacebookUrl = model.getProperty(NS + "hasFacebookUrl");
-			hasFacebookPeopleTalkingAbout = model.getProperty(NS
+			hasFacebookUrl = model.getDatatypeProperty(NS + "hasFacebookUrl");
+			hasFacebookPeopleTalkingAbout = model.getDatatypeProperty(NS
 					+ "hasFacebookPeopleTalkingAbout");
-			hasFacebookLikes = model.getProperty(NS + "hasFacebookLikes");
+			hasFacebookLikes = model.getDatatypeProperty(NS + "hasFacebookLikes");
 
-			hasLastFMUrl = model.getProperty(NS + "hasLastFMUrl");
-			hasLastFMListeners = model.getProperty(NS + "hasLastFMListeners");
-			hasLastFMPlayCount = model.getProperty(NS + "hasLastFMPlayCount");
+			hasLastFMUrl = model.getDatatypeProperty(NS + "hasLastFMUrl");
+			hasLastFMListeners = model.getDatatypeProperty(NS + "hasLastFMListeners");
+			hasLastFMPlayCount = model.getDatatypeProperty(NS + "hasLastFMPlayCount");
 
 			FileInputStream fis = new FileInputStream("artists.ser");
 			ObjectInputStream ois = new ObjectInputStream(fis);
@@ -140,10 +141,11 @@ public class jenaImporter {
 					XSDDatatype.XSDstring);
 
 			values = (Map<?, ?>) statsMap.get(_id);
-			for (Object e : statsMap.keySet()) {
+			for (Object e : values.keySet()) {
+				//System.out.println(e);
 				switch ((String) e) {
 				case "vevo":
-					Map<String, String> vevoValues = (Map<String, String>) statsMap
+					Map<String, String> vevoValues = (Map<String, String>) values
 							.get("vevo");
 					Literal url = model.createTypedLiteral(
 							vevoValues.get("url"), XSDDatatype.XSDstring);
@@ -163,8 +165,9 @@ public class jenaImporter {
 
 					break;
 				case "twitter":
-					Map<String, String> twitterValues = (Map<String, String>) statsMap
-							.get("vevo");
+					Map<String, String> twitterValues = (Map<String, String>) values
+							.get("twitter");
+					//System.out.println(twitterValues);
 					url = model.createTypedLiteral(twitterValues.get("url"),
 							XSDDatatype.XSDstring);
 					Literal followers = model.createTypedLiteral(
@@ -172,14 +175,12 @@ public class jenaImporter {
 							XSDDatatype.XSDinteger);
 
 					statements.add(model.createStatement(artistIndividual,
-							model.getProperty(NS + "hasTwitterUrl"),
-							hasTwitterUrl));
+							hasTwitterUrl, url));
 					statements.add(model.createStatement(artistIndividual,
-							model.getProperty(NS + "hasTwitterFollowers"),
-							hasTwitterFollowers));
+							hasTwitterFollowers, followers));
 					break;
 				case "facebook":
-					Map<String, String> fbValues = (Map<String, String>) statsMap
+					Map<String, String> fbValues = (Map<String, String>) values
 							.get("facebook");
 					url = model.createTypedLiteral(fbValues.get("url"),
 							XSDDatatype.XSDstring);
@@ -198,7 +199,7 @@ public class jenaImporter {
 
 					break;
 				case "lastfm":
-					Map<String, String> lfValues = (Map<String, String>) statsMap
+					Map<String, String> lfValues = (Map<String, String>) values
 							.get("lastfm");
 					url = model.createTypedLiteral(lfValues.get("url"),
 							XSDDatatype.XSDstring);
@@ -214,6 +215,7 @@ public class jenaImporter {
 					statements.add(model.createStatement(artistIndividual,
 							hasLastFMPlayCount, playcount));
 					break;
+					
 				}
 			}
 			statements.add(model.createStatement(artistIndividual,
