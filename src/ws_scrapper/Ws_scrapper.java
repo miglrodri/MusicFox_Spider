@@ -25,13 +25,13 @@ public class Ws_scrapper {
 	public static void main(String[] args) {
 
 		org.apache.log4j.BasicConfigurator.configure();
-		// new Scraper().start();
-		try {
-			new jenaImporter().main();
+		new Scraper().start();
+		/*try {
+			// new jenaImporter().main();
 		} catch (FileNotFoundException e) {
 			// // TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 
 	}
 }
@@ -43,8 +43,8 @@ public class Ws_scrapper {
 class Scraper extends Thread {
 
 	private String api_key = "1048b6a5acdb76adc78d351f04b96242";
-	
-	//private String api_key = "57716264bdd91bd35edc83d13f16f30c";
+
+	// private String api_key = "57716264bdd91bd35edc83d13f16f30c";
 
 	String[] blues = { "e21ee849-a6b5-11e0-b446-00251188dd67",
 			"e21ed16d-a6b5-11e0-b446-00251188dd67",
@@ -188,17 +188,17 @@ class Scraper extends Thread {
 				getArtists(rap[i], 0);
 				getArtists(reggae[i], 0);
 			}
-			/*FileInputStream fis = new FileInputStream("artists.ser");
-			ObjectInputStream ois = new ObjectInputStream(fis);
-			artistMap = (Map<String, Map>) ois.readObject();
-			ois.close();
-			fis.close();*/
+			/*
+			 * FileInputStream fis = new FileInputStream("artists.ser");
+			 * ObjectInputStream ois = new ObjectInputStream(fis); artistMap =
+			 * (Map<String, Map>) ois.readObject(); ois.close(); fis.close();
+			 */
 
 			System.out.println("END SCRAPPING: got " + artistMap.size()
 					+ " entries");
 
-			
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("artists.ser"));
+			ObjectOutputStream oos = new ObjectOutputStream(
+					new FileOutputStream("artists.ser"));
 			oos.writeObject(artistMap);
 			oos.flush();
 			oos.close();
@@ -207,7 +207,7 @@ class Scraper extends Thread {
 			oos.writeObject(statsMap);
 			oos.flush();
 			oos.close();
-			
+
 			System.out.println("SCRAPPING ALBUMS");
 
 			for (String key : artistMap.keySet()) {
@@ -225,8 +225,16 @@ class Scraper extends Thread {
 
 			System.out.println("SCRAPPING TRACKS");
 
+			int i = 0, count = 0;
 			for (String artistid : albumMap.keySet()) {
 				for (Object albumid : albumMap.get(artistid).keySet()) {
+					count++;
+				}
+			}
+			
+			for (String artistid : albumMap.keySet()) {
+				for (Object albumid : albumMap.get(artistid).keySet()) {
+					System.out.println(i++ + " de "+ count);
 					Map temp = getTracks((String) albumid, artistid);
 					trackMap.put((String) albumid, temp);
 				}
@@ -245,54 +253,6 @@ class Scraper extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * Builds a Map from a JSONObject
-	 * 
-	 * @param object
-	 * @return Map<String, ?>
-	 * @throws JSONException
-	 */
-	public Map<String, ?> toMap(JSONObject object) throws JSONException {
-
-		Map<String, Object> map = new HashMap<String, Object>();
-		Iterator<String> keysItr = object.keys();
-
-		while (keysItr.hasNext()) {
-			String key = keysItr.next();
-			Object value = object.get(key);
-			if (value instanceof JSONArray) {
-				value = toList((JSONArray) value);
-			} else if (value instanceof JSONObject) {
-				value = toMap((JSONObject) value);
-			}
-			map.put(key, value);
-		}
-		return map;
-	}
-
-	/**
-	 * Get a list from a JSONArray
-	 * 
-	 * @param array
-	 * @return List<?>
-	 * @throws JSONException
-	 */
-	public List<?> toList(JSONArray array) throws JSONException {
-		List<Object> list = new ArrayList<Object>();
-		for (int i = 0; i < array.length(); i++) {
-			Object value = array.get(i);
-			if (value instanceof JSONArray) {
-				value = toList((JSONArray) value);
-			}
-
-			else if (value instanceof JSONObject) {
-				value = toMap((JSONObject) value);
-			}
-			list.add(value);
-		}
-		return list;
 	}
 
 	/**
@@ -339,31 +299,42 @@ class Scraper extends Thread {
 			JSONObject obj = new JSONObject(response.toString());
 			String message = obj.getJSONObject("status").getString("message");
 
+			Map<String, String> index = new HashMap<String, String>(); 
+			
 			if (message.equals("Success")) {
 				JSONArray arr = obj.getJSONArray("data");
 				for (int i = 0; i < arr.length(); i++) {
-					if(arr.getJSONObject(i).has("track_index") && arr.getJSONObject(i).has("duration")){
+					if (arr.getJSONObject(i).has("track_index")
+							&& arr.getJSONObject(i).has("duration")) {
+						
 						Map<String, String> aux = new HashMap<String, String>();
-	
-						String temp_title = "" + arr.getJSONObject(i).get("title");
+
+						String temp_title = ""
+								+ arr.getJSONObject(i).get("title");
 						// System.out.println(album_id + ">name>"+ temp_title);
-						String temp_track_id = (String) arr.getJSONObject(i).get("id");
-						// System.out.println(album_id + ">id>" + temp_track_id);
-	
+						String temp_track_id = (String) arr.getJSONObject(i)
+								.get("id");
+						// System.out.println(album_id + ">id>" +
+						// temp_track_id);
+
 						String temp_trackindex = ""
 								+ arr.getJSONObject(i).get("track_index");
 						String temp_duration = ""
 								+ arr.getJSONObject(i).get("duration");
-	
-						aux.put("title", temp_title);
-						aux.put("track_index", temp_trackindex);
-						aux.put("duration", temp_duration);
-						aux.put("artist_id", artist_id);
-	
-						System.out.print("id:"+temp_track_id);
-						System.out.println(" \\ title: "+temp_title);
-						
-						temp.put(temp_track_id, aux);
+
+						if(!index.containsKey(temp_trackindex)){
+							
+							index.put(temp_trackindex, temp_track_id);
+							aux.put("title", temp_title);
+							aux.put("track_index", temp_trackindex);
+							aux.put("duration", temp_duration);
+							aux.put("artist_id", artist_id);
+
+							System.out.print("id:" + temp_track_id);
+							System.out.print(" \\ title: " + temp_title);
+							
+							temp.put(temp_track_id, aux);
+						}
 					}
 				}
 			}
@@ -428,30 +399,33 @@ class Scraper extends Thread {
 			if (message.equals("Success")) {
 				JSONArray arr = obj.getJSONArray("data");
 				for (int i = 0; i < arr.length(); i++) {
-					if(arr.getJSONObject(i).has("release_date") && arr.getJSONObject(i).has("number_of_tracks") 
-							&& arr.getJSONObject(i).has("decade")){
+					if (arr.getJSONObject(i).has("release_date")
+							&& arr.getJSONObject(i).has("number_of_tracks")
+							&& arr.getJSONObject(i).has("decade")) {
 						Map<String, String> aux = new HashMap<String, String>();
-	
-						String temp_title = "" + arr.getJSONObject(i).get("title");
+
+						String temp_title = ""
+								+ arr.getJSONObject(i).get("title");
 						// System.out.println(artist_id + ">name>"+ temp_title);
-						String temp_album_id = (String) arr.getJSONObject(i).get("id");
-						// System.out.println(artist_id + ">id>" + temp_album_id);
+						String temp_album_id = (String) arr.getJSONObject(i)
+								.get("id");
+						// System.out.println(artist_id + ">id>" +
+						// temp_album_id);
 						String temp_releasedate = ""
 								+ arr.getJSONObject(i).get("release_date");
 						String temp_numberoftracks = ""
 								+ arr.getJSONObject(i).get("number_of_tracks");
 						String temp_decade = ""
 								+ arr.getJSONObject(i).get("decade");
-	
+
 						aux.put("title", temp_title);
 						aux.put("release_date", temp_releasedate);
 						aux.put("number_of_tracks", temp_numberoftracks);
 						aux.put("decade", temp_decade);
-	
-						
-						System.out.print("id:"+temp_album_id);
-						System.out.println(" \\ title: "+temp_title);
-						
+
+						System.out.print("id:" + temp_album_id);
+						System.out.println(" \\ title: " + temp_title);
+
 						if (!temp_numberoftracks.equals("0"))
 							temp.put(temp_album_id, aux);
 					}
@@ -471,9 +445,10 @@ class Scraper extends Thread {
 
 		return temp;
 	}
-	
+
 	/**
 	 * Get number of albums for an artist
+	 * 
 	 * @param artist_id
 	 */
 	public boolean getAlbumCount(String artist_id) {
@@ -482,8 +457,8 @@ class Scraper extends Thread {
 			url += artist_id;
 			url += "/albums?api_key=" + api_key;
 
-			//System.out.println(url);
-			
+			// System.out.println(url);
+
 			URL obj_url = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj_url
 					.openConnection();
@@ -510,13 +485,13 @@ class Scraper extends Thread {
 			JSONObject obj = new JSONObject(response.toString());
 			String message = obj.getJSONObject("status").getString("message");
 
-			//System.out.println(response.toString());
+			// System.out.println(response.toString());
 
 			if (message.equals("Success")) {
 				JSONObject arr = obj.getJSONObject("pagination");
-				return (int)arr.get("total") != 0;
+				return (int) arr.get("total") != 0;
 			}
-			
+
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (ProtocolException e) {
@@ -545,9 +520,9 @@ class Scraper extends Thread {
 		try {
 			String url = "http://api.musicgraph.com/api/v2/artist/";
 			url += artist_id;
-			url += "/similar?api_key=" + api_key + "&limit=25";
-			//System.out.println(url);
-			
+			url += "/similar?api_key=" + api_key + "&limit=7";
+			// System.out.println(url);
+
 			URL obj_url = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj_url
 					.openConnection();
@@ -574,50 +549,53 @@ class Scraper extends Thread {
 			JSONObject obj = new JSONObject(response.toString());
 			String message = obj.getJSONObject("status").getString("message");
 
-			//System.out.println(response.toString());
+			// System.out.println(response.toString());
 
 			if (message.equals("Success")) {
 				JSONArray arr = obj.getJSONArray("data");
 				for (int i = 0; i < arr.length(); i++) {
-					if(arr.getJSONObject(i).has("main_genre") && arr.getJSONObject(i).has("decade") 
-							&& arr.getJSONObject(i).has("gender")){
+					if (arr.getJSONObject(i).has("main_genre")
+							&& arr.getJSONObject(i).has("decade")
+							&& arr.getJSONObject(i).has("gender")) {
 						if (getAlbumCount((String) arr.getJSONObject(i).get(
 								"id"))) {
-						
+
 							Map<String, String> tempMap = new HashMap<String, String>();
-							
+
 							String temp_artist_name = ""
 									+ arr.getJSONObject(i).get("name");
 							// System.out.println(artist_id + ">name>" +
 							// temp_artist_name);
-							String temp_artist_id = (String) arr.getJSONObject(i).get(
-									"id");
-							// System.out.println(artist_id + ">id>" + temp_artist_id);
+							String temp_artist_id = (String) arr.getJSONObject(
+									i).get("id");
+							// System.out.println(artist_id + ">id>" +
+							// temp_artist_id);
 							String temp_maingenre = ""
-							 		+ arr.getJSONObject(i).get("main_genre");
+									+ arr.getJSONObject(i).get("main_genre");
 							String temp_decade = ""
 									+ arr.getJSONObject(i).get("decade");
-		
+
 							String temp_gender = ""
 									+ arr.getJSONObject(i).get("gender");
-		
+
 							Map<String, Map> temp_stats = getStats(temp_artist_id);
-		
+
 							tempMap.put("name", temp_artist_name);
 							tempMap.put("main_genre", temp_maingenre);
 							tempMap.put("decade", temp_decade);
 							tempMap.put("gender", temp_gender);
-		
+
 							if (!artistMap.containsKey(temp_artist_id)) {
 								artistMap.put(temp_artist_id, tempMap);
-								System.out.print("id:"+temp_artist_id);
-								System.out.println(" \\ name: "+temp_artist_name);
+								System.out.print("id:" + temp_artist_id);
+								System.out.println(" \\ name: "
+										+ temp_artist_name);
 								statsMap.put(temp_artist_id, temp_stats);
 							}
-							//getArtists(temp_artist_id, depth + 1);
-							
+							// getArtists(temp_artist_id, depth + 1);
+
 						}
-						
+
 					}
 				}
 			}
@@ -645,8 +623,8 @@ class Scraper extends Thread {
 			url += artist_id;
 			url += "/metrics?api_key=" + api_key;
 
-			//System.out.println(url);
-			
+			// System.out.println(url);
+
 			URL obj_url = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj_url
 					.openConnection();
