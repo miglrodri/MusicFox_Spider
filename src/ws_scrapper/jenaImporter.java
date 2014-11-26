@@ -291,7 +291,7 @@ public class jenaImporter {
 
 				Individual trackIndividual = track.createIndividual(NS
 						+ trackID);
-				// TODO get artist individual to set object properties
+
 				Individual artistIndividual = model.getIndividual(NS
 						+ trackValues.get("artist_id"));
 

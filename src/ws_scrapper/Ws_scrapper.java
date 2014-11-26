@@ -25,13 +25,13 @@ public class Ws_scrapper {
 	public static void main(String[] args) {
 
 		org.apache.log4j.BasicConfigurator.configure();
-		new Scraper().start();
-		/*try {
-			// new jenaImporter().main();
+//		new Scraper().start();
+		try {
+			new jenaImporter().main();
 		} catch (FileNotFoundException e) {
-			// // TODO Auto-generated catch block
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 
 	}
 }

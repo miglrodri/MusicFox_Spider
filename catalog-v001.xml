@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
     <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
-        <uri id="Automatically generated entry, Timestamp=1417004119802" name="duplicate:http://www.semanticweb.org/MusicOntology" uri="MusicOntology.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1417004119802" name="duplicate:http://www.semanticweb.org/MusicOntology" uri="MusicOntologyV1RDF.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1417018834781" name="duplicate:http://www.semanticweb.org/MusicOntology" uri="bakcup_26_11_2014_16_15_MusicOntology.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1417018834781" name="duplicate:http://www.semanticweb.org/MusicOntology" uri="MusicOntology.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1417018834781" name="duplicate:http://www.semanticweb.org/MusicOntology" uri="MusicOntologyV1RDF.owl"/>
     </group>
 </catalog>
